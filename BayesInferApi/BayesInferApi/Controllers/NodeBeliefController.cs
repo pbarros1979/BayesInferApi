@@ -106,16 +106,37 @@ namespace BayesInferApi.Controllers
             NodeBeliefResult res;
 
             List<NodeBeliefResult> lstNodeBeliefResult = new List<NodeBeliefResult>();
-            foreach (var item in redeBayesiana.Nodes)
+
+			foreach (var item in redeBayesiana.Nodes)
             {
                 
                 res = new NodeBeliefResult();
-
-                    res.NodeName = item.Id;
-                    res.ResultAusente = item.InferModelResult[0].GetProbs()[1];
-                    res.ResultPresente = item.InferModelResult[0].GetProbs()[0];
-                
-                
+				res.NodeName = item.Id;
+				if (item.InferPrimary.IsObserved)
+				{
+					if (item.InferPrimary.ObservedValue[0] == 0)
+					{
+						res.ResultAusente = 1;
+						res.ResultPresente = 0;
+					}
+					else
+					{
+						res.ResultAusente = 0;
+						res.ResultPresente = 1;
+					}
+					
+				}
+				else if (item.Parents.Count()==0)
+				{
+					res.ResultAusente = item.InferProbPrior.ObservedValue.GetMean()[0];
+					res.ResultPresente = item.InferProbPrior.ObservedValue.GetMean()[1];
+				}
+				else
+				{
+					
+					res.ResultAusente = item.InferModelResult[0].GetProbs()[1];
+					res.ResultPresente = item.InferModelResult[0].GetProbs()[0];
+				}
                 lstNodeBeliefResult.Add(res);
             }
 

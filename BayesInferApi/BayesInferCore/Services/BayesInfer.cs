@@ -119,9 +119,15 @@ namespace BayesInferCore.Services
                 if (result==null)
                 {
                     ndInfer.InferPrimary.ClearObservedValue();
+					////Selecionando para inferir apenas quem tem parents
+					//if (ndInfer.NodeParents.Count() > 0)
+					//{
+					//	ndInfer.InferModelResult = _redeBayesiana.Engine.Infer<Discrete[]>(ndInfer.InferPrimary);
+					//}
+					//Inferindo todo os nodos
+					ndInfer.InferModelResult = _redeBayesiana.Engine.Infer<Discrete[]>(ndInfer.InferPrimary);
 
-                    ndInfer.InferModelResult = _redeBayesiana.Engine.Infer<Discrete[]>(ndInfer.InferPrimary);
-                }
+				}
                 else if(result.BeliefValue == null)
                 {
                     ndInfer.InferModelResult = _redeBayesiana.Engine.Infer<Discrete[]>(ndInfer.InferPrimary);
