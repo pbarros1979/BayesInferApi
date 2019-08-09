@@ -1,0 +1,1120 @@
+{
+  "version": 2,
+  "network": {
+    "id": "6f839fb0-5eec-4d42-b8b8-25f8b0b99477",
+    "name": "Rede Bayesiana",
+    "height": 500,
+    "width": 900,
+    "selectedNodes": [],
+    "beliefs": {},
+    "propertiesPanelVisible": true,
+    "kind": "BN",
+    "subnetworks": [],
+    "linkages": {}
+  },
+  "nodes": [
+    {
+      "id": "Cloud",
+      "states": [
+        "Sim",
+        "Não"
+      ],
+      "parents": [],
+      "cpt": {
+        "Sim": 0.5,
+        "Não": 0.5
+      }
+    },
+    {
+      "id": "sprinkler",
+      "states": [
+        "Sim",
+        "Não"
+      ],
+      "parents": [
+        "Cloud"
+      ],
+      "cpt": [
+        {
+          "when": {
+            "Cloud": "Sim"
+          },
+          "then": {
+            "Sim": 0.1,
+            "Não": 0.9
+          }
+        },
+        {
+          "when": {
+            "Cloud": "Não"
+          },
+          "then": {
+            "Sim": 0.5,
+            "Não": 0.5
+          }
+        }
+      ]
+    },
+    {
+      "id": "Rain",
+      "states": [
+        "Sim",
+        "Não"
+      ],
+      "parents": [
+        "Cloud"
+      ],
+      "cpt": [
+        {
+          "when": {
+            "Cloud": "Sim"
+          },
+          "then": {
+            "Sim": 0.8,
+            "Não": 0.2
+          }
+        },
+        {
+          "when": {
+            "Cloud": "Não"
+          },
+          "then": {
+            "Sim": 0.2,
+            "Não": 0.8
+          }
+        }
+      ]
+    },
+    {
+      "id": "Wet grass",
+      "states": [
+        "Sim",
+        "Não"
+      ],
+      "parents": [
+        "Rain",
+        "sprinkler",
+        "VarTeste",
+        "Teste2",
+        "Teste3",
+        "Teste4"
+      ],
+      "cpt": [
+        {
+          "when": {
+            "Rain": "Sim",
+            "sprinkler": "Sim",
+            "VarTeste": "Sim",
+            "Teste2": "Sim",
+            "Teste3": "Sim",
+            "Teste4": "Sim"
+          },
+          "then": {
+            "Sim": 0.99,
+            "Não": 0.01
+          }
+        },
+        {
+          "when": {
+            "Rain": "Não",
+            "sprinkler": "Sim",
+            "VarTeste": "Sim",
+            "Teste2": "Sim",
+            "Teste3": "Sim",
+            "Teste4": "Sim"
+          },
+          "then": {
+            "Sim": 0.8,
+            "Não": 0.2
+          }
+        },
+        {
+          "when": {
+            "Rain": "Sim",
+            "sprinkler": "Não",
+            "VarTeste": "Sim",
+            "Teste2": "Sim",
+            "Teste3": "Sim",
+            "Teste4": "Sim"
+          },
+          "then": {
+            "Sim": 0.8,
+            "Não": 0.2
+          }
+        },
+        {
+          "when": {
+            "Rain": "Não",
+            "sprinkler": "Não",
+            "VarTeste": "Sim",
+            "Teste2": "Sim",
+            "Teste3": "Sim",
+            "Teste4": "Sim"
+          },
+          "then": {
+            "Sim": 0.2,
+            "Não": 0.8
+          }
+        },
+        {
+          "when": {
+            "Rain": "Sim",
+            "sprinkler": "Sim",
+            "VarTeste": "Não",
+            "Teste2": "Sim",
+            "Teste3": "Sim",
+            "Teste4": "Sim"
+          },
+          "then": {
+            "Sim": 0.8,
+            "Não": 0.2
+          }
+        },
+        {
+          "when": {
+            "Rain": "Não",
+            "sprinkler": "Sim",
+            "VarTeste": "Não",
+            "Teste2": "Sim",
+            "Teste3": "Sim",
+            "Teste4": "Sim"
+          },
+          "then": {
+            "Sim": 0.4,
+            "Não": 0.6
+          }
+        },
+        {
+          "when": {
+            "Rain": "Sim",
+            "sprinkler": "Não",
+            "VarTeste": "Não",
+            "Teste2": "Sim",
+            "Teste3": "Sim",
+            "Teste4": "Sim"
+          },
+          "then": {
+            "Sim": 0.4,
+            "Não": 0.6
+          }
+        },
+        {
+          "when": {
+            "Rain": "Não",
+            "sprinkler": "Não",
+            "VarTeste": "Não",
+            "Teste2": "Sim",
+            "Teste3": "Sim",
+            "Teste4": "Sim"
+          },
+          "then": {
+            "Sim": 0.8,
+            "Não": 0.2
+          }
+        },
+        {
+          "when": {
+            "Rain": "Sim",
+            "sprinkler": "Sim",
+            "VarTeste": "Sim",
+            "Teste2": "Não",
+            "Teste3": "Sim",
+            "Teste4": "Sim"
+          },
+          "then": {
+            "Sim": 0.8,
+            "Não": 0.2
+          }
+        },
+        {
+          "when": {
+            "Rain": "Não",
+            "sprinkler": "Sim",
+            "VarTeste": "Sim",
+            "Teste2": "Não",
+            "Teste3": "Sim",
+            "Teste4": "Sim"
+          },
+          "then": {
+            "Sim": 0.5,
+            "Não": 0.5
+          }
+        },
+        {
+          "when": {
+            "Rain": "Sim",
+            "sprinkler": "Não",
+            "VarTeste": "Sim",
+            "Teste2": "Não",
+            "Teste3": "Sim",
+            "Teste4": "Sim"
+          },
+          "then": {
+            "Sim": 0.5,
+            "Não": 0.5
+          }
+        },
+        {
+          "when": {
+            "Rain": "Não",
+            "sprinkler": "Não",
+            "VarTeste": "Sim",
+            "Teste2": "Não",
+            "Teste3": "Sim",
+            "Teste4": "Sim"
+          },
+          "then": {
+            "Sim": 0.2,
+            "Não": 0.8
+          }
+        },
+        {
+          "when": {
+            "Rain": "Sim",
+            "sprinkler": "Sim",
+            "VarTeste": "Não",
+            "Teste2": "Não",
+            "Teste3": "Sim",
+            "Teste4": "Sim"
+          },
+          "then": {
+            "Sim": 0.2,
+            "Não": 0.8
+          }
+        },
+        {
+          "when": {
+            "Rain": "Não",
+            "sprinkler": "Sim",
+            "VarTeste": "Não",
+            "Teste2": "Não",
+            "Teste3": "Sim",
+            "Teste4": "Sim"
+          },
+          "then": {
+            "Sim": 0.3,
+            "Não": 0.7
+          }
+        },
+        {
+          "when": {
+            "Rain": "Sim",
+            "sprinkler": "Não",
+            "VarTeste": "Não",
+            "Teste2": "Não",
+            "Teste3": "Sim",
+            "Teste4": "Sim"
+          },
+          "then": {
+            "Sim": 0.3,
+            "Não": 0.7
+          }
+        },
+        {
+          "when": {
+            "Rain": "Não",
+            "sprinkler": "Não",
+            "VarTeste": "Não",
+            "Teste2": "Não",
+            "Teste3": "Sim",
+            "Teste4": "Sim"
+          },
+          "then": {
+            "Sim": 0,
+            "Não": 1
+          }
+        },
+        {
+          "when": {
+            "Rain": "Sim",
+            "sprinkler": "Sim",
+            "VarTeste": "Sim",
+            "Teste2": "Sim",
+            "Teste3": "Não",
+            "Teste4": "Sim"
+          },
+          "then": {
+            "Sim": 0.99,
+            "Não": 0.01
+          }
+        },
+        {
+          "when": {
+            "Rain": "Não",
+            "sprinkler": "Sim",
+            "VarTeste": "Sim",
+            "Teste2": "Sim",
+            "Teste3": "Não",
+            "Teste4": "Sim"
+          },
+          "then": {
+            "Sim": 0.8,
+            "Não": 0.2
+          }
+        },
+        {
+          "when": {
+            "Rain": "Sim",
+            "sprinkler": "Não",
+            "VarTeste": "Sim",
+            "Teste2": "Sim",
+            "Teste3": "Não",
+            "Teste4": "Sim"
+          },
+          "then": {
+            "Sim": 0.8,
+            "Não": 0.2
+          }
+        },
+        {
+          "when": {
+            "Rain": "Não",
+            "sprinkler": "Não",
+            "VarTeste": "Sim",
+            "Teste2": "Sim",
+            "Teste3": "Não",
+            "Teste4": "Sim"
+          },
+          "then": {
+            "Sim": 0.2,
+            "Não": 0.8
+          }
+        },
+        {
+          "when": {
+            "Rain": "Sim",
+            "sprinkler": "Sim",
+            "VarTeste": "Não",
+            "Teste2": "Sim",
+            "Teste3": "Não",
+            "Teste4": "Sim"
+          },
+          "then": {
+            "Sim": 0.8,
+            "Não": 0.2
+          }
+        },
+        {
+          "when": {
+            "Rain": "Não",
+            "sprinkler": "Sim",
+            "VarTeste": "Não",
+            "Teste2": "Sim",
+            "Teste3": "Não",
+            "Teste4": "Sim"
+          },
+          "then": {
+            "Sim": 0.4,
+            "Não": 0.6
+          }
+        },
+        {
+          "when": {
+            "Rain": "Sim",
+            "sprinkler": "Não",
+            "VarTeste": "Não",
+            "Teste2": "Sim",
+            "Teste3": "Não",
+            "Teste4": "Sim"
+          },
+          "then": {
+            "Sim": 0.4,
+            "Não": 0.6
+          }
+        },
+        {
+          "when": {
+            "Rain": "Não",
+            "sprinkler": "Não",
+            "VarTeste": "Não",
+            "Teste2": "Sim",
+            "Teste3": "Não",
+            "Teste4": "Sim"
+          },
+          "then": {
+            "Sim": 0.8,
+            "Não": 0.2
+          }
+        },
+        {
+          "when": {
+            "Rain": "Sim",
+            "sprinkler": "Sim",
+            "VarTeste": "Sim",
+            "Teste2": "Não",
+            "Teste3": "Não",
+            "Teste4": "Sim"
+          },
+          "then": {
+            "Sim": 0.8,
+            "Não": 0.2
+          }
+        },
+        {
+          "when": {
+            "Rain": "Não",
+            "sprinkler": "Sim",
+            "VarTeste": "Sim",
+            "Teste2": "Não",
+            "Teste3": "Não",
+            "Teste4": "Sim"
+          },
+          "then": {
+            "Sim": 0.5,
+            "Não": 0.5
+          }
+        },
+        {
+          "when": {
+            "Rain": "Sim",
+            "sprinkler": "Não",
+            "VarTeste": "Sim",
+            "Teste2": "Não",
+            "Teste3": "Não",
+            "Teste4": "Sim"
+          },
+          "then": {
+            "Sim": 0.5,
+            "Não": 0.5
+          }
+        },
+        {
+          "when": {
+            "Rain": "Não",
+            "sprinkler": "Não",
+            "VarTeste": "Sim",
+            "Teste2": "Não",
+            "Teste3": "Não",
+            "Teste4": "Sim"
+          },
+          "then": {
+            "Sim": 0.2,
+            "Não": 0.8
+          }
+        },
+        {
+          "when": {
+            "Rain": "Sim",
+            "sprinkler": "Sim",
+            "VarTeste": "Não",
+            "Teste2": "Não",
+            "Teste3": "Não",
+            "Teste4": "Sim"
+          },
+          "then": {
+            "Sim": 0.2,
+            "Não": 0.8
+          }
+        },
+        {
+          "when": {
+            "Rain": "Não",
+            "sprinkler": "Sim",
+            "VarTeste": "Não",
+            "Teste2": "Não",
+            "Teste3": "Não",
+            "Teste4": "Sim"
+          },
+          "then": {
+            "Sim": 0.3,
+            "Não": 0.7
+          }
+        },
+        {
+          "when": {
+            "Rain": "Sim",
+            "sprinkler": "Não",
+            "VarTeste": "Não",
+            "Teste2": "Não",
+            "Teste3": "Não",
+            "Teste4": "Sim"
+          },
+          "then": {
+            "Sim": 0.3,
+            "Não": 0.7
+          }
+        },
+        {
+          "when": {
+            "Rain": "Não",
+            "sprinkler": "Não",
+            "VarTeste": "Não",
+            "Teste2": "Não",
+            "Teste3": "Não",
+            "Teste4": "Sim"
+          },
+          "then": {
+            "Sim": 0,
+            "Não": 1
+          }
+        },
+        {
+          "when": {
+            "Rain": "Sim",
+            "sprinkler": "Sim",
+            "VarTeste": "Sim",
+            "Teste2": "Sim",
+            "Teste3": "Sim",
+            "Teste4": "Não"
+          },
+          "then": {
+            "Sim": 0.99,
+            "Não": 0.01
+          }
+        },
+        {
+          "when": {
+            "Rain": "Não",
+            "sprinkler": "Sim",
+            "VarTeste": "Sim",
+            "Teste2": "Sim",
+            "Teste3": "Sim",
+            "Teste4": "Não"
+          },
+          "then": {
+            "Sim": 0.8,
+            "Não": 0.2
+          }
+        },
+        {
+          "when": {
+            "Rain": "Sim",
+            "sprinkler": "Não",
+            "VarTeste": "Sim",
+            "Teste2": "Sim",
+            "Teste3": "Sim",
+            "Teste4": "Não"
+          },
+          "then": {
+            "Sim": 0.8,
+            "Não": 0.2
+          }
+        },
+        {
+          "when": {
+            "Rain": "Não",
+            "sprinkler": "Não",
+            "VarTeste": "Sim",
+            "Teste2": "Sim",
+            "Teste3": "Sim",
+            "Teste4": "Não"
+          },
+          "then": {
+            "Sim": 0.2,
+            "Não": 0.8
+          }
+        },
+        {
+          "when": {
+            "Rain": "Sim",
+            "sprinkler": "Sim",
+            "VarTeste": "Não",
+            "Teste2": "Sim",
+            "Teste3": "Sim",
+            "Teste4": "Não"
+          },
+          "then": {
+            "Sim": 0.8,
+            "Não": 0.2
+          }
+        },
+        {
+          "when": {
+            "Rain": "Não",
+            "sprinkler": "Sim",
+            "VarTeste": "Não",
+            "Teste2": "Sim",
+            "Teste3": "Sim",
+            "Teste4": "Não"
+          },
+          "then": {
+            "Sim": 0.4,
+            "Não": 0.6
+          }
+        },
+        {
+          "when": {
+            "Rain": "Sim",
+            "sprinkler": "Não",
+            "VarTeste": "Não",
+            "Teste2": "Sim",
+            "Teste3": "Sim",
+            "Teste4": "Não"
+          },
+          "then": {
+            "Sim": 0.4,
+            "Não": 0.6
+          }
+        },
+        {
+          "when": {
+            "Rain": "Não",
+            "sprinkler": "Não",
+            "VarTeste": "Não",
+            "Teste2": "Sim",
+            "Teste3": "Sim",
+            "Teste4": "Não"
+          },
+          "then": {
+            "Sim": 0.8,
+            "Não": 0.2
+          }
+        },
+        {
+          "when": {
+            "Rain": "Sim",
+            "sprinkler": "Sim",
+            "VarTeste": "Sim",
+            "Teste2": "Não",
+            "Teste3": "Sim",
+            "Teste4": "Não"
+          },
+          "then": {
+            "Sim": 0.8,
+            "Não": 0.2
+          }
+        },
+        {
+          "when": {
+            "Rain": "Não",
+            "sprinkler": "Sim",
+            "VarTeste": "Sim",
+            "Teste2": "Não",
+            "Teste3": "Sim",
+            "Teste4": "Não"
+          },
+          "then": {
+            "Sim": 0.5,
+            "Não": 0.5
+          }
+        },
+        {
+          "when": {
+            "Rain": "Sim",
+            "sprinkler": "Não",
+            "VarTeste": "Sim",
+            "Teste2": "Não",
+            "Teste3": "Sim",
+            "Teste4": "Não"
+          },
+          "then": {
+            "Sim": 0.5,
+            "Não": 0.5
+          }
+        },
+        {
+          "when": {
+            "Rain": "Não",
+            "sprinkler": "Não",
+            "VarTeste": "Sim",
+            "Teste2": "Não",
+            "Teste3": "Sim",
+            "Teste4": "Não"
+          },
+          "then": {
+            "Sim": 0.2,
+            "Não": 0.8
+          }
+        },
+        {
+          "when": {
+            "Rain": "Sim",
+            "sprinkler": "Sim",
+            "VarTeste": "Não",
+            "Teste2": "Não",
+            "Teste3": "Sim",
+            "Teste4": "Não"
+          },
+          "then": {
+            "Sim": 0.2,
+            "Não": 0.8
+          }
+        },
+        {
+          "when": {
+            "Rain": "Não",
+            "sprinkler": "Sim",
+            "VarTeste": "Não",
+            "Teste2": "Não",
+            "Teste3": "Sim",
+            "Teste4": "Não"
+          },
+          "then": {
+            "Sim": 0.3,
+            "Não": 0.7
+          }
+        },
+        {
+          "when": {
+            "Rain": "Sim",
+            "sprinkler": "Não",
+            "VarTeste": "Não",
+            "Teste2": "Não",
+            "Teste3": "Sim",
+            "Teste4": "Não"
+          },
+          "then": {
+            "Sim": 0.3,
+            "Não": 0.7
+          }
+        },
+        {
+          "when": {
+            "Rain": "Não",
+            "sprinkler": "Não",
+            "VarTeste": "Não",
+            "Teste2": "Não",
+            "Teste3": "Sim",
+            "Teste4": "Não"
+          },
+          "then": {
+            "Sim": 0,
+            "Não": 1
+          }
+        },
+        {
+          "when": {
+            "Rain": "Sim",
+            "sprinkler": "Sim",
+            "VarTeste": "Sim",
+            "Teste2": "Sim",
+            "Teste3": "Não",
+            "Teste4": "Não"
+          },
+          "then": {
+            "Sim": 0.99,
+            "Não": 0.01
+          }
+        },
+        {
+          "when": {
+            "Rain": "Não",
+            "sprinkler": "Sim",
+            "VarTeste": "Sim",
+            "Teste2": "Sim",
+            "Teste3": "Não",
+            "Teste4": "Não"
+          },
+          "then": {
+            "Sim": 0.8,
+            "Não": 0.2
+          }
+        },
+        {
+          "when": {
+            "Rain": "Sim",
+            "sprinkler": "Não",
+            "VarTeste": "Sim",
+            "Teste2": "Sim",
+            "Teste3": "Não",
+            "Teste4": "Não"
+          },
+          "then": {
+            "Sim": 0.8,
+            "Não": 0.2
+          }
+        },
+        {
+          "when": {
+            "Rain": "Não",
+            "sprinkler": "Não",
+            "VarTeste": "Sim",
+            "Teste2": "Sim",
+            "Teste3": "Não",
+            "Teste4": "Não"
+          },
+          "then": {
+            "Sim": 0.2,
+            "Não": 0.8
+          }
+        },
+        {
+          "when": {
+            "Rain": "Sim",
+            "sprinkler": "Sim",
+            "VarTeste": "Não",
+            "Teste2": "Sim",
+            "Teste3": "Não",
+            "Teste4": "Não"
+          },
+          "then": {
+            "Sim": 0.8,
+            "Não": 0.2
+          }
+        },
+        {
+          "when": {
+            "Rain": "Não",
+            "sprinkler": "Sim",
+            "VarTeste": "Não",
+            "Teste2": "Sim",
+            "Teste3": "Não",
+            "Teste4": "Não"
+          },
+          "then": {
+            "Sim": 0.4,
+            "Não": 0.6
+          }
+        },
+        {
+          "when": {
+            "Rain": "Sim",
+            "sprinkler": "Não",
+            "VarTeste": "Não",
+            "Teste2": "Sim",
+            "Teste3": "Não",
+            "Teste4": "Não"
+          },
+          "then": {
+            "Sim": 0.4,
+            "Não": 0.6
+          }
+        },
+        {
+          "when": {
+            "Rain": "Não",
+            "sprinkler": "Não",
+            "VarTeste": "Não",
+            "Teste2": "Sim",
+            "Teste3": "Não",
+            "Teste4": "Não"
+          },
+          "then": {
+            "Sim": 0.8,
+            "Não": 0.2
+          }
+        },
+        {
+          "when": {
+            "Rain": "Sim",
+            "sprinkler": "Sim",
+            "VarTeste": "Sim",
+            "Teste2": "Não",
+            "Teste3": "Não",
+            "Teste4": "Não"
+          },
+          "then": {
+            "Sim": 0.8,
+            "Não": 0.2
+          }
+        },
+        {
+          "when": {
+            "Rain": "Não",
+            "sprinkler": "Sim",
+            "VarTeste": "Sim",
+            "Teste2": "Não",
+            "Teste3": "Não",
+            "Teste4": "Não"
+          },
+          "then": {
+            "Sim": 0.5,
+            "Não": 0.5
+          }
+        },
+        {
+          "when": {
+            "Rain": "Sim",
+            "sprinkler": "Não",
+            "VarTeste": "Sim",
+            "Teste2": "Não",
+            "Teste3": "Não",
+            "Teste4": "Não"
+          },
+          "then": {
+            "Sim": 0.5,
+            "Não": 0.5
+          }
+        },
+        {
+          "when": {
+            "Rain": "Não",
+            "sprinkler": "Não",
+            "VarTeste": "Sim",
+            "Teste2": "Não",
+            "Teste3": "Não",
+            "Teste4": "Não"
+          },
+          "then": {
+            "Sim": 0.2,
+            "Não": 0.8
+          }
+        },
+        {
+          "when": {
+            "Rain": "Sim",
+            "sprinkler": "Sim",
+            "VarTeste": "Não",
+            "Teste2": "Não",
+            "Teste3": "Não",
+            "Teste4": "Não"
+          },
+          "then": {
+            "Sim": 0.2,
+            "Não": 0.8
+          }
+        },
+        {
+          "when": {
+            "Rain": "Não",
+            "sprinkler": "Sim",
+            "VarTeste": "Não",
+            "Teste2": "Não",
+            "Teste3": "Não",
+            "Teste4": "Não"
+          },
+          "then": {
+            "Sim": 0.3,
+            "Não": 0.7
+          }
+        },
+        {
+          "when": {
+            "Rain": "Sim",
+            "sprinkler": "Não",
+            "VarTeste": "Não",
+            "Teste2": "Não",
+            "Teste3": "Não",
+            "Teste4": "Não"
+          },
+          "then": {
+            "Sim": 0.3,
+            "Não": 0.7
+          }
+        },
+        {
+          "when": {
+            "Rain": "Não",
+            "sprinkler": "Não",
+            "VarTeste": "Não",
+            "Teste2": "Não",
+            "Teste3": "Não",
+            "Teste4": "Não"
+          },
+          "then": {
+            "Sim": 0,
+            "Não": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "VarTeste",
+      "states": [
+        "Sim",
+        "Não"
+      ],
+      "parents": [],
+      "cpt": {
+        "Sim": 0.2,
+        "Não": 0.8
+      }
+    },
+    {
+      "id": "Teste2",
+      "states": [
+        "Sim",
+        "Não"
+      ],
+      "parents": [
+        "Cloud"
+      ],
+      "cpt": [
+        {
+          "when": {
+            "Cloud": "Sim"
+          },
+          "then": {
+            "Sim": 0.2,
+            "Não": 0.8
+          }
+        },
+        {
+          "when": {
+            "Cloud": "Não"
+          },
+          "then": {
+            "Sim": 1,
+            "Não": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "Teste3",
+      "states": [
+        "Sim",
+        "Não"
+      ],
+      "parents": [
+        "Rain"
+      ],
+      "cpt": [
+        {
+          "when": {
+            "Rain": "Sim"
+          },
+          "then": {
+            "Sim": 1,
+            "Não": 0
+          }
+        },
+        {
+          "when": {
+            "Rain": "Não"
+          },
+          "then": {
+            "Sim": 0.3,
+            "Não": 0.7
+          }
+        }
+      ]
+    },
+    {
+      "id": "Teste4",
+      "states": [
+        "Sim",
+        "Não"
+      ],
+      "parents": [],
+      "cpt": {
+        "Sim": 0.8,
+        "Não": 0.2
+      }
+    }
+  ],
+  "positions": {
+    "Cloud": {
+      "x": 276,
+      "y": 35
+    },
+    "sprinkler": {
+      "x": 14,
+      "y": 196
+    },
+    "Rain": {
+      "x": 536,
+      "y": 82
+    },
+    "Wet grass": {
+      "x": 258,
+      "y": 345
+    },
+    "VarTeste": {
+      "x": 30,
+      "y": 55.399993896484375
+    },
+    "Teste2": {
+      "x": 298,
+      "y": 201.39999389648438
+    },
+    "Teste3": {
+      "x": 552,
+      "y": 211.79999542236328
+    },
+    "Teste4": {
+      "x": 632,
+      "y": 310.7999954223633
+    }
+  }
+}

@@ -1,0 +1,46 @@
+﻿@model BayesInferApi.Models.ArquivoRedeBayesiana
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h2>Create</h2>
+
+<h4>ArquivoRedeBayesiana</h4>
+<hr />
+<div class="row">
+    <section>
+        <form method="post" enctype="multipart/form-data"
+              asp-controller="ArquivoRede" asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="col-md-5">
+                <div class="form-group">
+                    <label asp-for="NomeRede" class="control-label"></label>
+                    <input asp-for="NomeRede" class="form-control" name="nomeRede" />
+                    <span asp-validation-for="NomeRede" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Descricao" class="control-label"></label>
+                    <input asp-for="Descricao" class="form-control" name="descricaoRede" />
+                    <span asp-validation-for="Descricao" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <p>Formulario parea envio de arquivo de rede bayesiana:</p>
+                    <input type="file" name="file" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Upload" />
+                </div>
+            </div>
+
+        </form>
+    </section>
+</div>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

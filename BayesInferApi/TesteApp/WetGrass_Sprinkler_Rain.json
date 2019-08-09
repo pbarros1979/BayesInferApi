@@ -1,0 +1,160 @@
+{
+  "version": 2,
+  "network": {
+    "id": "6f839fb0-5eec-4d42-b8b8-25f8b0b99477",
+    "name": "RedeBayesiana",
+    "height": 500,
+    "width": 800,
+    "selectedNodes": [],
+    "beliefs": {},
+    "propertiesPanelVisible": true,
+    "kind": "BN",
+    "subnetworks": [],
+    "linkages": {}
+  },
+  "nodes": [
+    {
+      "id": "Cloud",
+      "states": [
+        "Sim",
+        "Não"
+      ],
+      "parents": [],
+      "cpt": {
+        "Sim": 0.5,
+        "Não": 0.5
+      }
+    },
+    {
+      "id": "sprinkler",
+      "states": [
+        "Sim",
+        "Não"
+      ],
+      "parents": [
+        "Cloud"
+      ],
+      "cpt": [
+        {
+          "when": {
+            "Cloud": "Sim"
+          },
+          "then": {
+            "Sim": 0.1,
+            "Não": 0.9
+          }
+        },
+        {
+          "when": {
+            "Cloud": "Não"
+          },
+          "then": {
+            "Sim": 0.5,
+            "Não": 0.5
+          }
+        }
+      ]
+    },
+    {
+      "id": "Rain",
+      "states": [
+        "Sim",
+        "Não"
+      ],
+      "parents": [
+        "Cloud"
+      ],
+      "cpt": [
+        {
+          "when": {
+            "Cloud": "Sim"
+          },
+          "then": {
+            "Sim": 0.8,
+            "Não": 0.2
+          }
+        },
+        {
+          "when": {
+            "Cloud": "Não"
+          },
+          "then": {
+            "Sim": 0.2,
+            "Não": 0.8
+          }
+        }
+      ]
+    },
+    {
+      "id": "Wet grass",
+      "states": [
+        "Sim",
+        "Não"
+      ],
+      "parents": [
+        "Rain",
+        "sprinkler"
+      ],
+      "cpt": [
+        {
+          "when": {
+            "Rain": "Sim",
+            "sprinkler": "Sim"
+          },
+          "then": {
+            "Sim": 0.99,
+            "Não": 0.01
+          }
+        },
+        {
+          "when": {
+            "Rain": "Não",
+            "sprinkler": "Sim"
+          },
+          "then": {
+            "Sim": 0.9,
+            "Não": 0.1
+          }
+        },
+        {
+          "when": {
+            "Rain": "Sim",
+            "sprinkler": "Não"
+          },
+          "then": {
+            "Sim": 0.9,
+            "Não": 0.1
+          }
+        },
+        {
+          "when": {
+            "Rain": "Não",
+            "sprinkler": "Não"
+          },
+          "then": {
+            "Sim": 0,
+            "Não": 1
+          }
+        }
+      ]
+    }
+  ],
+  "positions": {
+    "Cloud": {
+      "x": 302,
+      "y": 32
+    },
+    "sprinkler": {
+      "x": 72,
+      "y": 197
+    },
+    "Rain": {
+      "x": 573,
+      "y": 209
+    },
+    "Wet grass": {
+      "x": 334,
+      "y": 363
+    }
+  }
+}
