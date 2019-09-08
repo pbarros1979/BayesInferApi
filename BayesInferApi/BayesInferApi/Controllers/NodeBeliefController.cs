@@ -13,6 +13,7 @@ using BayesInferCore.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace BayesInferApi.Controllers
@@ -21,13 +22,17 @@ namespace BayesInferApi.Controllers
     {
         private readonly BayesInferContext _context;
         private INodeBeliefService _nodeBeliefService;
+		private readonly ILogger _logger;
 
 
-        public NodeBeliefController(BayesInferContext context, INodeBeliefService nodeBeliefService)
+
+
+		public NodeBeliefController(BayesInferContext context, INodeBeliefService nodeBeliefService, ILogger<NodeBeliefController> logger)
         {
             _context = context;
             _nodeBeliefService = nodeBeliefService;
-        }
+			_logger = logger;
+		}
         [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
         public async Task<ActionResult> Index()
         {
@@ -95,51 +100,75 @@ namespace BayesInferApi.Controllers
             List<Belief> beliefs = new List<Belief>();
             foreach (var item in _nodeBeliefService.NodesBelief)
             {
-                beliefs.Add(new Belief
-                {
+				beliefs.Add(new Belief
+				{
+					
                     NodeName = item.Id,
                     BeliefValue = item.BeliefType == 2 ? null : (int?)item.BeliefType
 
                 });
-            }
-            redeBayesiana = bayesInfer.InferModel(beliefs);
-            NodeBeliefResult res;
+				_logger.LogInformation("Message displayed: {Message}", "Node name add: "+ item.Id);
+			}
+
+			try
+			{
+				redeBayesiana = bayesInfer.InferModel(beliefs);
+				_logger.LogInformation("Message displayed: {Message}", "Inferencia realizada em " + beliefs.Count+" nodos");
+			}
+			catch (Exception e)
+			{
+
+				_logger.LogError("Message displayed: {Message}", "Erro " + e.Message);
+				//throw;
+			}
+            
+			
+			NodeBeliefResult res;
 
             List<NodeBeliefResult> lstNodeBeliefResult = new List<NodeBeliefResult>();
 
-			foreach (var item in redeBayesiana.Nodes)
-            {
-                
-                res = new NodeBeliefResult();
-				res.NodeName = item.Id;
-				if (item.InferPrimary.IsObserved)
+			try
+			{
+
+				foreach (var item in redeBayesiana.Nodes)
 				{
-					if (item.InferPrimary.ObservedValue[0] == 0)
+
+					res = new NodeBeliefResult();
+					res.NodeName = item.Id;
+					if (item.InferPrimary.IsObserved)
 					{
-						res.ResultAusente = 1;
-						res.ResultPresente = 0;
+						if (item.InferPrimary.ObservedValue[0] == 0)
+						{
+							res.ResultAusente = 1;
+							res.ResultPresente = 0;
+						}
+						else
+						{
+							res.ResultAusente = 0;
+							res.ResultPresente = 1;
+						}
+
+					}
+					else if (item.Parents.Count() == 0)
+					{
+						res.ResultAusente = item.InferProbPrior.ObservedValue.GetMean()[0];
+						res.ResultPresente = item.InferProbPrior.ObservedValue.GetMean()[1];
 					}
 					else
 					{
-						res.ResultAusente = 0;
-						res.ResultPresente = 1;
-					}
-					
-				}
-				else if (item.Parents.Count()==0)
-				{
-					res.ResultAusente = item.InferProbPrior.ObservedValue.GetMean()[0];
-					res.ResultPresente = item.InferProbPrior.ObservedValue.GetMean()[1];
-				}
-				else
-				{
-					
-					res.ResultAusente = item.InferModelResult[0].GetProbs()[1];
-					res.ResultPresente = item.InferModelResult[0].GetProbs()[0];
-				}
-                lstNodeBeliefResult.Add(res);
-            }
 
+						res.ResultAusente = item.InferModelResult[0].GetProbs()[1];
+						res.ResultPresente = item.InferModelResult[0].GetProbs()[0];
+					}
+					lstNodeBeliefResult.Add(res);
+				}
+
+			}
+			catch (Exception e)
+			{
+
+				_logger.LogError("Message displayed: {Message}", "Erro " + e.Message);
+			}
 
             return Json(lstNodeBeliefResult);
             //return Json(lstNodeBeliefResult);
