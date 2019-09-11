@@ -17,9 +17,9 @@ namespace BayesInferCore.Services
 
 		}
 
-		private void LoadModel()
-		{
 
+		private void moralization()
+		{
 		}
 
 		public FileBayesianNetwork InferModel(List<Belief> crenca)
