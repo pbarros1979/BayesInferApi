@@ -1,6 +1,4 @@
-﻿using Microsoft.ML.Probabilistic.Distributions;
-using Microsoft.ML.Probabilistic.Math;
-using Microsoft.ML.Probabilistic.Models;
+﻿
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -9,7 +7,7 @@ using System.Xml.Serialization;
 
 namespace BayesInferCore.Model
 {
-    public class Node : InferNode
+    public class Node 
     {
         public enum Estado  {Novo=0,Carregado=1,Finalizado=2}
 

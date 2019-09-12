@@ -44,7 +44,7 @@ namespace BayesInferApi.Service
             var serializerSettings = new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.Auto,
-                ContractResolver = new CollectionAsObjectResolver(),
+                //ContractResolver = new CollectionAsObjectResolver(),
                 PreserveReferencesHandling = PreserveReferencesHandling.Objects
             };
             var serializer = JsonSerializer.Create(serializerSettings);
@@ -66,7 +66,7 @@ namespace BayesInferApi.Service
             var serializerSettings = new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.Auto,
-                ContractResolver = new CollectionAsObjectResolver(),
+                //ContractResolver = new CollectionAsObjectResolver(),
                 PreserveReferencesHandling = PreserveReferencesHandling.Objects
             };
             var serializer = JsonSerializer.Create(serializerSettings);

@@ -1,5 +1,4 @@
 ﻿using BayesInferCore.Services;
-using Microsoft.ML.Probabilistic.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -8,7 +7,7 @@ using System.Xml.Serialization;
 
 namespace BayesInferCore.Model
 {
-    public class FileBayesianNetwork : InferModel
+    public class FileBayesianNetwork 
     {
 		public FileBayesianNetwork()
 		{

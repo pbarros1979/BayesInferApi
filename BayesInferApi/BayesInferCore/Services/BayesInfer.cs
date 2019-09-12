@@ -1,8 +1,5 @@
 ﻿using BayesInferCore.Model;
-using Microsoft.ML.Probabilistic.Algorithms;
-using Microsoft.ML.Probabilistic.Distributions;
-using Microsoft.ML.Probabilistic.Math;
-using Microsoft.ML.Probabilistic.Models;
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -20,11 +17,11 @@ namespace BayesInferCore.Services
         {
             _redeBayesiana = redeBayesiana;
 
-            Rand.Restart(12347);
-            _redeBayesiana.Engine = new InferenceEngine();
-            _redeBayesiana.NodoRaiz = Variable.New<int>().Named("NofE");
-            _redeBayesiana.N = new Range(_redeBayesiana.NodoRaiz).Named("N");
-            _redeBayesiana.NodoRaiz.ObservedValue = 1;
+            //Rand.Restart(12347);
+            //_redeBayesiana.Engine = new InferenceEngine();
+            //_redeBayesiana.NodoRaiz = Variable.New<int>().Named("NofE");
+            //_redeBayesiana.N = new Range(_redeBayesiana.NodoRaiz).Named("N");
+            //_redeBayesiana.NodoRaiz.ObservedValue = 1;
 
             ///Carrega Modelo para inferência
             LoadModel();
@@ -74,19 +71,20 @@ namespace BayesInferCore.Services
                 {
                     if (pairNodeCrenca.Value == null)
                     {
-                        nodeResult.InferPrimary.ClearObservedValue();
+                       // nodeResult.InferPrimary.ClearObservedValue();
                     }
                     else
                     {
-                        nodeResult.InferPrimary.ObservedValue = new int[] { (int)pairNodeCrenca.Value };
+                        //nodeResult.InferPrimary.ObservedValue = new int[] { (int)pairNodeCrenca.Value };
                     }
                 }
             }
-            Node ndInfer = _redeBayesiana.Nodes.Where(x => x.Id == nodeInfer).SingleOrDefault();
-            ndInfer.InferPrimary.ClearObservedValue();
-            var infer = _redeBayesiana.Engine.Infer<Discrete[]>(ndInfer.InferPrimary);
-            double resultInfer = infer[0].GetProbs()[0];
-            return resultInfer;
+			//Node ndInfer = _redeBayesiana.Nodes.Where(x => x.Id == nodeInfer).SingleOrDefault();
+			//ndInfer.InferPrimary.ClearObservedValue();
+			//var infer = _redeBayesiana.Engine.Infer<Discrete[]>(ndInfer.InferPrimary);
+			//double resultInfer = infer[0].GetProbs()[0];
+			//return resultInfer;
+			return 0;
         }
 
         public FileBayesianNetwork InferModel(List<Belief> crenca)
@@ -99,7 +97,7 @@ namespace BayesInferCore.Services
                 {
                     if (nodeCrenca.BeliefValue == null)
                     {
-                        nodeResult.InferPrimary.ClearObservedValue();
+                        //nodeResult.InferPrimary.ClearObservedValue();
                     }
                     else
                     {
@@ -108,8 +106,8 @@ namespace BayesInferCore.Services
                             val[0] = 1;
                         else
                             val[1] = 1;
-                        nodeResult.InferModelResult = new Discrete[] { new Discrete(val) };
-                        nodeResult.InferPrimary.ObservedValue = new int[] { (int)nodeCrenca.BeliefValue };
+                        //nodeResult.InferModelResult = new Discrete[] { new Discrete(val) };
+                        //nodeResult.InferPrimary.ObservedValue = new int[] { (int)nodeCrenca.BeliefValue };
                     }
                 }
             }
@@ -118,19 +116,19 @@ namespace BayesInferCore.Services
                 var result = crenca.SingleOrDefault(v => v.NodeName == ndInfer.Id);
                 if (result==null)
                 {
-                    ndInfer.InferPrimary.ClearObservedValue();
+                    //ndInfer.InferPrimary.ClearObservedValue();
 					////Selecionando para inferir apenas quem tem parents
 					//if (ndInfer.NodeParents.Count() > 0)
 					//{
 					//	ndInfer.InferModelResult = _redeBayesiana.Engine.Infer<Discrete[]>(ndInfer.InferPrimary);
 					//}
 					//Inferindo todo os nodos
-					ndInfer.InferModelResult = _redeBayesiana.Engine.Infer<Discrete[]>(ndInfer.InferPrimary);
+					//ndInfer.InferModelResult = _redeBayesiana.Engine.Infer<Discrete[]>(ndInfer.InferPrimary);
 
 				}
                 else if(result.BeliefValue == null)
                 {
-                    ndInfer.InferModelResult = _redeBayesiana.Engine.Infer<Discrete[]>(ndInfer.InferPrimary);
+                    //ndInfer.InferModelResult = _redeBayesiana.Engine.Infer<Discrete[]>(ndInfer.InferPrimary);
                 }
             }
             _rede = _redeBayesiana;
