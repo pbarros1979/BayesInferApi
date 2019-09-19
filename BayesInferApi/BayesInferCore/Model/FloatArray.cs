@@ -51,9 +51,17 @@ namespace BayesInferCore.Model
 		/// Returns the number of elements in this list
 		/// </summary>
 		/// <returns>the number of elements in this list</returns>
-		public int Size()
+		public int Size
 		{
-			return size;
+			get
+			{
+				return size;
+			}
+			set
+			{
+				size = value;
+			}
+			
 		}
 
 		/// </summary>

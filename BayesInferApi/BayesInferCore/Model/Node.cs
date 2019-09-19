@@ -9,6 +9,11 @@ namespace BayesInferCore.Model
 {
     public class Node 
     {
+
+		public Node()
+		{
+			NodeParents = new List<Node>();
+		}
         public enum Estado  {Novo=0,Carregado=1,Finalizado=2}
 
         [JsonProperty("id")]
