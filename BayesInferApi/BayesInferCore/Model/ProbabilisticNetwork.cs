@@ -9,18 +9,19 @@ namespace BayesInferCore.Model
 		protected String id;
 		protected String name;
 		protected List<ProbabilisticNode> NodeList;
-		protected List<Edges> edgeList;
+		protected List<Edges> EdgeList;
 
 
 		public ProbabilisticNetwork()
 		{
 			NodeList = new List<ProbabilisticNode>();
+			EdgeList = new List<Edges>();
 		}
 		public ProbabilisticNetwork(String name)
 		{
 			this.id = this.name = name;
 			NodeList = new List<ProbabilisticNode>();
-			edgeList = new List<Edges>();
+			EdgeList = new List<Edges>();
 		}
 
 		/**
@@ -29,7 +30,7 @@ namespace BayesInferCore.Model
 		 */
 		public List<Edges> GetEdges()
 		{
-			return this.edgeList;
+			return this.EdgeList;
 		}
 
 		/**
@@ -103,7 +104,7 @@ namespace BayesInferCore.Model
 		{
 			edge.GetOriginNode().Children.Add(edge.GetDestinationNode());
 			edge.GetDestinationNode().Parents.Add(edge.GetOriginNode());
-			edgeList.Add(edge);
+			EdgeList.Add(edge);
 		}
 
 
@@ -115,13 +116,13 @@ namespace BayesInferCore.Model
 		// *@param  node2  : destination node
 		// *@return      index of the edge in {@link #getEdges()}, or -1 if it does not exist.
 		// */
-		public int hasEdge(ProbabilisticNode node1, ProbabilisticNode node2)
+		public int HasEdge(ProbabilisticNode node1, ProbabilisticNode node2)
 		{
 			// TODO use a more efficient structure (like hash map) instead of linear search on edgeList
-			return hasEdge(node1, node2, edgeList);
+			return HasEdge(node1, node2, EdgeList);
 		}
 
-		public int hasEdge(ProbabilisticNode node1, ProbabilisticNode node2, List<Edges> vetArcos)
+		public int HasEdge(ProbabilisticNode node1, ProbabilisticNode node2, List<Edges> vetArcos)
 		{
 			if (node1 == node2)
 			{

@@ -8,7 +8,7 @@ namespace BayesInferCore.Model
 	{
 
 		public string StateBase { get; private set; }
-		public float StateBaseValue { get; private set; }
+		public float StateBaseValue { get; set; }
 		public List<NodeState> NodeStatesParent { get; private set; }
 
 		public TableNodeState(string stateBase ,float stateBaseValue, List<NodeState> nodeStates=null)
