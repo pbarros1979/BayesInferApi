@@ -50,7 +50,7 @@ namespace BayesInferCore.Model
 			Children = new List<Clique>();
 			Nodes = new List<ProbabilisticNode>();
 			associatedNodes = new List<ProbabilisticNode>();
-			//PotentialTable = new ProbabilisticTable();
+			PotentialTable = new List<ProbabilisticTable>();
 		}
 
 		/**
@@ -64,6 +64,7 @@ namespace BayesInferCore.Model
 			Children = new List<Clique>();
 			Nodes = new List<ProbabilisticNode>();
 			associatedNodes = new List<ProbabilisticNode>();
+			PotentialTable = new List<ProbabilisticTable>();
 			//PotentialTable = new ProbabilisticTable();
 		}
 
@@ -79,6 +80,7 @@ namespace BayesInferCore.Model
 			Children = new List<Clique>();
 			Nodes = new List<ProbabilisticNode>();
 			associatedNodes = new List<ProbabilisticNode>();
+			PotentialTable = new List<ProbabilisticTable>();
 			//PotentialTable = new ProbabilisticTable();
 			//potentialTable = cliqueProbability;
 			//if (potentialTable == null)

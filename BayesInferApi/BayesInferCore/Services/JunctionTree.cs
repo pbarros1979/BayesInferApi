@@ -38,7 +38,7 @@ namespace BayesInferCore.Services
 			Cliques(probabilisticNet, nodeEliminationOrder);
 			StrongTreeMethod(probabilisticNet, nodeEliminationOrder);
 			SortCliqueNodes(probabilisticNet, nodeEliminationOrder);
-			addVariablesToCliqueAndSeparatorTables(probabilisticNet);
+			AddVariablesToCliqueAndSeparatorTables(probabilisticNet);
 		}
 
 
@@ -488,129 +488,49 @@ namespace BayesInferCore.Services
 				}
 			}
 		}
-		private void addVariablesToCliqueAndSeparatorTables(ProbabilisticNetwork net)
+		private void AddVariablesToCliqueAndSeparatorTables(ProbabilisticNetwork net)
 		{
 			// TODO clean the code and stop using auxiliary variables reused along the entire method for different purposes.
 			ProbabilisticNodeTable auxUtilTab;
-			Clique auxClique;
+			//Clique auxClique;
 
 			for (int i = _cliques.Count() - 1; i >= 0; i--)
 			{
-				auxClique = _cliques[i];
-				int numNodes = auxClique.Nodes.Count();
+				//auxClique = _cliques[i];
+				int numNodes = _cliques[i].Nodes.Count();
 				int numNodeState = 1;
-				foreach (var item in auxClique.Nodes)
+				foreach (var item in _cliques[i].Nodes)
 				{
 					numNodeState *= item.States.Count(); 
 				}
-				auxClique.PotentialTable = new List<ProbabilisticTable>();
+				_cliques[i].PotentialTable = new List<ProbabilisticTable>();
 				for (int l = 0; l < numNodeState; l++)
 				{
-					auxClique.PotentialTable.Add(new ProbabilisticTable(l));
+					_cliques[i].PotentialTable.Add(new ProbabilisticTable(l));
 				}
-
-				for (int j = 0; j < auxClique.Nodes.Count(); j++)
+				for (int j = 0; j < _cliques[i].Nodes.Count(); j++)
 				{
 					int ixState = 0;
 					for (int k = 0; k < numNodeState; k++)
 					{
-						if(k>0 && ((k) % (numNodeState / (auxClique.Nodes[j].States.Count() * (j+1))) == 0))
+						if(k>0 && ((k) % (numNodeState / (_cliques[i].Nodes[j].States.Count() * (j+1))) == 0))
 						{
 							ixState++;
-							if(ixState>= auxClique.Nodes[j].States.Count())
+							if(ixState>= _cliques[i].Nodes[j].States.Count())
 							{
 								ixState = 0;
 							}
 						}
 						
-						string stateString = auxClique.Nodes[j].States[ixState];
-						auxClique.PotentialTable[k].TableCliqueSeparators.Add(new TableCliqueSeparator(stateString, auxClique.Nodes[j]));
+						string stateString = _cliques[i].Nodes[j].States[ixState];
+						_cliques[i].PotentialTable[k].TableCliqueSeparators.Add(new TableCliqueSeparator(stateString, _cliques[i].Nodes[j]));
 					}
 					
 				}
-
-				//StringBuilder stringBuilder = new StringBuilder();
-
-				for (int m = 0; m < auxClique.PotentialTable.Count; m++)
-				{
-					//stringBuilder.Append("\nIndice=" + auxClique.PotentialTable[m].Index + "\n");
-					foreach (var item in auxClique.PotentialTable[m].TableCliqueSeparators)
-					{
-						//stringBuilder.Append("| Nodo: " + item.NodeBase.Name + " - Estado: " + item.StateBase);
-						ProbabilisticNodeTable tabelaNode = item.NodeBase.PriorTabelaNode;
-
-						if (item.NodeBase.Parents.Count == 0)
-						{
-							var a = item.NodeBase.PriorTabelaNode.TableNodeStates.Where(n => n.StateBase == item.StateBase).FirstOrDefault();
-							item.StateBaseValue = a.StateBaseValue;
-							//stringBuilder.Append(" - Nodo value: " + item.StateBaseValue);
-						}
-						else
-						{
-							List<TableNodeState> a = item.NodeBase.PriorTabelaNode.TableNodeStates.Where(n => n.StateBase == item.StateBase).ToList();
-							foreach (var tableNodeStates in a)
-							{
-								bool valueOk = true;
-								foreach (var stateParent in tableNodeStates.NodeStatesParent)
-								{
-									var parent = auxClique.PotentialTable[m].TableCliqueSeparators.Where(n => n.NodeBase.Name == stateParent.NodeValue.Name && n.StateBase==stateParent.StateString).FirstOrDefault();
-									if (parent == null)
-									{
-										valueOk = false;
-										break;
-									}
-								}
-								if (valueOk)
-								{
-									item.StateBaseValue = tableNodeStates.StateBaseValue;
-									//stringBuilder.Append(" - Nodo value: " + tableNodeStates.StateBaseValue);
-									break;
-								}
-
-							}
-
-
-						}
-
-
-
-
-						//foreach (var nodeState in tabelaNode.TableNodeStates)
-						//{
-						//	if (nodeState.NodeStatesParent.Count() == 0)
-						//	{
-						//		if(nodeState.StateBase== item.StateBase)
-						//		{
-						//			item.StateBaseValue = nodeState.StateBaseValue;
-						//			stringBuilder.Append(" - Nodo value: " + item.StateBaseValue);
-						//		}
-						//	}
-						//	else
-						//	{
-						//		bool valido = true;
-						//		foreach (var tableClique in auxClique.PotentialTable[m].TableCliqueSeparators)
-						//		{
-						//			NodeState node = nodeState.NodeStatesParent.FirstOrDefault(n => n.NodeValue.Name == tableClique.NodeBase.Name && n.StateString == tableClique.StateBase);
-						//			if (node == null)
-						//			{
-						//				valido = false;
-						//			}
-						//		}
-						//		if (valido)
-						//		{
-						//			item.StateBaseValue = nodeState.StateBaseValue;
-						//			stringBuilder.Append(" - Nodo value: " + item.StateBaseValue);
-						//		}
-
-						//	}
-						//	//stringBuilder.Append("\n| Nodo value: " + nodeState.StateBaseValue + " - Estado: " + nodeState.StateBase);
-						//}
-
-					}
-				}
-				//logWriter.LogWrite(stringBuilder.ToString());
-
 			}
+
+
+
 
 			foreach (Separator auxSep in _separators)
 			{
@@ -623,9 +543,91 @@ namespace BayesInferCore.Services
 				//	auxUtilTab.addVariable(auxSep.getNodesList().get(c));
 				//}
 			}
+			StringBuilder stringBuilder = new StringBuilder();
+			
+			foreach (var clique in _cliques)
+			{
+				stringBuilder.Append("\nIndice do clique=" + clique.Index+ "\n");
+				stringBuilder.Append("Nodos:");
+				foreach (var item in clique.Nodes)
+				{
+					stringBuilder.Append(item.Name+" - ");
+				}
+				stringBuilder.Append("\nTabela Probabilidades:\n");
+				foreach (var linha in clique.PotentialTable)
+				{
+					stringBuilder.Append("\nIndice :"+linha.Index+"- Prob:"+ Math.Round(linha.Prob, 3)+" |");
+					foreach (var coluna in linha.TableCliqueSeparators)
+					{
+						stringBuilder.Append("Nodo :" + coluna.NodeBase.Name+ " - Estado: "+coluna.StateBase + " - Valor: "+coluna.StateBaseValue+" |");
+					}
+				}
+				logWriter.LogWrite(stringBuilder.ToString());
+				stringBuilder.Clear();
+			}
+
+
+		}
+
+		public void FowardPropagation(ProbabilisticNetwork net)
+		{
+			for (int i = _cliques.Count() - 1; i >= 0; i--)
+			{
+
+				for (int m = 0; m < _cliques[i].PotentialTable.Count; m++)
+				{
+					_cliques[i].PotentialTable[m].Prob = 1;
+					foreach (var item in _cliques[i].PotentialTable[m].TableCliqueSeparators)
+					{
+						ProbabilisticNodeTable tabelaNode = item.NodeBase.PriorTabelaNode;
+						if (item.NodeBase.Parents.Count == 0)
+						{
+							var a = item.NodeBase.PriorTabelaNode.TableNodeStates.Where(n => n.StateBase == item.StateBase).FirstOrDefault();
+							item.StateBaseValue = a.StateBaseValue;
+						}
+						else
+						{
+							List<TableNodeState> tableNodeStates = item.NodeBase.PriorTabelaNode.TableNodeStates.Where(n => n.StateBase == item.StateBase).ToList();
+
+
+							var qtd = _cliques[i].Nodes.Intersect(item.NodeBase.Parents);
+							if (qtd.Count() == 0)
+							{
+								item.StateBaseValue = 1;
+								foreach (var state in tableNodeStates)
+								{
+									item.StateBaseValue += state.StateBaseValue;
+								}
+							}
+							else
+							{
+								foreach (var tableNodeState in tableNodeStates)
+								{
+									bool valueOk = true;
+									foreach (var stateParent in tableNodeState.NodeStatesParent)
+									{
+										var parent = _cliques[i].PotentialTable[m].TableCliqueSeparators.Where(n => n.NodeBase.Name == stateParent.NodeValue.Name && n.StateBase == stateParent.StateString).FirstOrDefault();
+										if (parent == null)
+										{
+											valueOk = false;
+											break;
+										}
+									}
+									if (valueOk)
+									{
+										item.StateBaseValue = tableNodeState.StateBaseValue;
+										break;
+									}
+								}
+							}
 
 
 
+						}
+						_cliques[i].PotentialTable[m].Prob *= item.StateBaseValue;
+					}
+				}
+			}
 		}
 
 		//private ProbabilisticTable GetTableProb(ProbabilisticNode node, int indexTable, int indexState, List<ProbabilisticTable> probabilisticTable)
@@ -637,7 +639,7 @@ namespace BayesInferCore.Services
 		//		TableNodeState tableNodeState = probabilisticNode.PriorTabelaNode.TableNodeStates.Find(x => x.StateBase == state);
 
 		//		//TableCliqueSeparator tableCliqueSeparator = new TableCliqueSeparator();
-				
+
 		//	}
 		//		return probabilisticTable;
 		//}
