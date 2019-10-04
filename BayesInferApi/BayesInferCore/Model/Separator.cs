@@ -6,36 +6,26 @@ namespace BayesInferCore.Model
 {
 	public class Separator
 	{
-		private ProbabilisticTable TabelaPot { get; set; }
-
-		private int internalIdentificator = int.MinValue;
+		public List<ProbabilisticTable> PotentialTable { get; set; }
 
 		public List<ProbabilisticNode> Nodes { get; set; }
 
-		private Clique clique1;
+		public Clique Origem { get; set; }
 
-		private Clique clique2;
+		public Clique Destino { get; set; }
 
 		private Separator()
 		{
 			Nodes = new List<ProbabilisticNode>();
-			//TabelaPot = new ProbabilisticTable();
-
+			PotentialTable = new List<ProbabilisticTable>();
 		}
 
-		/**
-		 * Constructor initializing fields
-		 * @param clique1
-		 * @param clique2
-		 * @param probTable : probability table
-		 * @param utilTable : utility table
-		 * @param updateCliques
-		 */
-		public Separator(Clique clique1, Clique clique2)
+		public Separator(Clique origem, Clique destino)
 		{
-			this.clique1 = clique1;
-			this.clique2 = clique2;
-			
+			Nodes = new List<ProbabilisticNode>();
+			PotentialTable = new List<ProbabilisticTable>();
+			this.Origem = origem;
+			this.Destino = destino;
 		}
 	}
 }
