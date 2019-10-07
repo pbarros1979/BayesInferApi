@@ -34,12 +34,6 @@ namespace BayesInferCore.Model
 		 */
 		public List<ProbabilisticNode> Nodes { get; set; }
 
-		/**
-		 * List of probabilistic nodes related to Clique.
-		 */
-		private List<ProbabilisticNode> associatedNodes;
-
-
 
 		/**
 		 * Creates a new clique. Initializes array of children, array of cluster
@@ -49,49 +43,34 @@ namespace BayesInferCore.Model
 		{
 			Children = new List<Clique>();
 			Nodes = new List<ProbabilisticNode>();
-			associatedNodes = new List<ProbabilisticNode>();
+			//associatedNodes = new List<ProbabilisticNode>();
 			PotentialTable = new List<ProbabilisticTable>();
 		}
 
-		/**
-		 * Constructor initializing fields.
-		 * @param cliqueProb : potential table representing clique potentials (probability).
-		 * Specify this parameter if you want to use special instance of clique potential for this clique.
-		 * @see #Clique(PotentialTable, PotentialTable)
-		 */
-		public Clique(ProbabilisticNode cliqueProb)
-		{
-			Children = new List<Clique>();
-			Nodes = new List<ProbabilisticNode>();
-			associatedNodes = new List<ProbabilisticNode>();
-			PotentialTable = new List<ProbabilisticTable>();
-			//PotentialTable = new ProbabilisticTable();
-		}
 
-		/**
-		 * Constructor initializing fields.
-		 * @param cliqueProb : potential table representing clique potentials (probability).
-		 * Specify this parameter if you want to use special instance of clique potential for this clique.
-		 * @param cliqueUtility : potential table representing clique utility values.
-		 * Specify this parameter if you want to use special instance of utility table for this clique.
-		 */
-		public Clique(ProbabilisticNode cliqueProbability, ProbabilisticNode cliqueUtility)
+		public void Normalize()
 		{
-			Children = new List<Clique>();
-			Nodes = new List<ProbabilisticNode>();
-			associatedNodes = new List<ProbabilisticNode>();
-			PotentialTable = new List<ProbabilisticTable>();
-			//PotentialTable = new ProbabilisticTable();
-			//potentialTable = cliqueProbability;
-			//if (potentialTable == null)
-			//{
-			//	potentialTable = new ProbabilisticTable();
-			//}
-			//utilityTable = cliqueUtility;
-			//if (utilityTable == null)
-			//{
-			//	utilityTable = new UtilityTable();
-			//}
+			float n = 0;
+			float valor;
+			foreach (var item in PotentialTable)
+			{
+				n += item.Prob;
+			}
+			if (Math.Abs(n - 1.0) > 0.00005)
+			{
+				foreach (var item in PotentialTable)
+				{
+					valor = item.Prob;
+					if (valor == 0.0)
+					{
+						// zeros will remain always zero.
+						continue;
+					}
+
+					valor /= n;
+					item.Prob = valor;
+				}
+			}
 		}
 	}
 }

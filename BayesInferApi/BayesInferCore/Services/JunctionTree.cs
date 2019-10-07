@@ -37,9 +37,8 @@ namespace BayesInferCore.Services
 			List<ProbabilisticNode> nodeEliminationOrder = Triangulate(probabilisticNet);
 			Cliques(probabilisticNet, nodeEliminationOrder);
 			StrongTreeMethod(probabilisticNet, nodeEliminationOrder);
-			SortCliqueNodes(probabilisticNet, nodeEliminationOrder);
-			AddVariablesToCliqueAndSeparatorTables(probabilisticNet);
-			FowardPropagation(probabilisticNet);
+			SortCliqueNodes(nodeEliminationOrder);
+			AddVariablesToCliqueAndSeparatorTables();
 		}
 
 
@@ -431,7 +430,7 @@ namespace BayesInferCore.Services
 
 			return neighborIndex;
 		}
-		private void SortCliqueNodes(ProbabilisticNetwork net, List<ProbabilisticNode> nodeEliminationOrder)
+		private void SortCliqueNodes(List<ProbabilisticNode> nodeEliminationOrder)
 		{
 			List<Clique> cliqueList = _cliques;
 
@@ -488,10 +487,8 @@ namespace BayesInferCore.Services
 				}
 			}
 		}
-		private void AddVariablesToCliqueAndSeparatorTables(ProbabilisticNetwork net)
+		private void AddVariablesToCliqueAndSeparatorTables()
 		{
-			// TODO clean the code and stop using auxiliary variables reused along the entire method for different purposes.
-			ProbabilisticNodeTable auxUtilTab;
 			Clique auxClique;
 			Separator auxSeparator;
 
@@ -526,12 +523,8 @@ namespace BayesInferCore.Services
 						string stateString = auxClique.Nodes[j].States[ixState];
 						auxClique.PotentialTable[k].TableCliqueSeparators.Add(new TableCliqueSeparator(stateString, _cliques[i].Nodes[j]));
 					}
-
 				}
 			}
-
-
-
 			for (int i = 0; i < _separators.Count; i++)
 			{
 				auxSeparator = _separators[i];
@@ -567,19 +560,6 @@ namespace BayesInferCore.Services
 				}
 
 			}
-
-
-			//foreach (Separator auxSep in _separators)
-			//{
-			//	//auxTable = auxSep.getProbabilityFunction();
-			//	//auxUtilTab = auxSep.getUtilityTable();
-			//	//int numNodes = auxSep.getNodesList().size();
-			//	//for (int c = 0; c < numNodes; c++)
-			//	//{
-			//	//	auxTable.addVariable(auxSep.getNodesList().get(c));
-			//	//	auxUtilTab.addVariable(auxSep.getNodesList().get(c));
-			//	//}
-			//}
 			StringBuilder stringBuilder = new StringBuilder();
 
 			foreach (var clique in _cliques)
@@ -602,9 +582,6 @@ namespace BayesInferCore.Services
 				logWriter.LogWrite(stringBuilder.ToString());
 				stringBuilder.Clear();
 			}
-
-
-
 			foreach (var sep in _separators)
 			{
 				stringBuilder.Append("\nSeparator clique origem=" + sep.Origem.Index + "- Separator clique destino = " + sep.Destino.Index + "\n");
@@ -628,7 +605,7 @@ namespace BayesInferCore.Services
 
 
 		}
-		public void FowardPropagation(ProbabilisticNetwork net)
+		public void FowardPropagation()
 		{
 			Clique auxClique;
 
@@ -648,17 +625,25 @@ namespace BayesInferCore.Services
 						auxClique.PotentialTable[m].Prob = 1;
 						foreach (var item in auxClique.PotentialTable[m].TableCliqueSeparators)
 						{
-							ProbabilisticNodeTable tabelaNode = item.NodeBase.PriorTabelaNode;
+							//Verifica se nodo do clique possui pai, caso não tenha a tabela possui apenas probabilidadse do estado do nodo
 							if (item.NodeBase.Parents.Count == 0)
 							{
-								var a = item.NodeBase.PriorTabelaNode.TableNodeStates.Where(n => n.StateBase == item.StateBase).FirstOrDefault();
-								item.StateBaseValue = a.StateBaseValue;
+								////Verifica se existe crença definida
+								//if (item.NodeBase.BeliefValue == null)
+								//{
+									var a = item.NodeBase.PriorTabelaNode.TableNodeStates.Where(n => n.StateBase == item.StateBase).FirstOrDefault();
+									item.StateBaseValue = a.StateBaseValue;
+								//}
+								//else
+								//{
+								//	item.StateBaseValue = (int)item.NodeBase.BeliefValue;
+								//}
+								
 							}
 							else
 							{
+								//Se nodo do clique possui pais a tabela possui apenas probabilidadse do estado do nodo
 								List<TableNodeState> tableNodeStates = item.NodeBase.PriorTabelaNode.TableNodeStates.Where(n => n.StateBase == item.StateBase).ToList();
-
-
 								var qtd = _cliques[i].Nodes.Intersect(item.NodeBase.Parents);
 								if (qtd.Count() == 0)
 								{
@@ -692,6 +677,7 @@ namespace BayesInferCore.Services
 							}
 							auxClique.PotentialTable[m].Prob *= item.StateBaseValue;
 						}
+
 						foreach (var sep in sepLater)
 						{
 							List<ProbabilisticNode> intersectNodes = auxClique.Nodes.Intersect(sep.Nodes).ToList();
@@ -743,6 +729,10 @@ namespace BayesInferCore.Services
 					}
 				}
 			}
+		}
+		public void InitBelief()
+		{
+
 		}
 		private void SetProbTableClic(ProbabilisticTable probabilisticTable, List<ProbabilisticNode> exceptNodes, Clique clique)
 		{
@@ -823,7 +813,7 @@ namespace BayesInferCore.Services
 		public FileBayesianNetwork InferModel(List<Belief> crenca)
 		{
 
-
+			FowardPropagation();
 
 
 
