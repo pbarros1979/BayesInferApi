@@ -7,7 +7,6 @@ namespace BayesInferCore.Model
 	public class ProbabilisticNode
 	{
 		private Object lockObj;
-
 		public String Description { get; set; }
 		public String Name { get; set; }
 		public String Label { get; set; }
@@ -16,13 +15,14 @@ namespace BayesInferCore.Model
 		public List<String> States { get; set; }
 		public List<ProbabilisticNode> Adjacents { get; private set; }
 		public ProbabilisticNodeTable PriorTabelaNode { get; private set; }
-		public ProbabilisticNodeTable PosteriorTabelaNode { get; private set; }
+		public List<ProbabilisticNodeState> PosteriorTabelaNode { get; private set; }
 
 		public int? BeliefValue { get; set; }
 
 		public ProbabilisticNode()
 		{
 			lockObj = new object();
+			PosteriorTabelaNode = new List<ProbabilisticNodeState>();
 			PriorTabelaNode = new ProbabilisticNodeTable();
 			Parents = new List<ProbabilisticNode>();
 			Children = new List<ProbabilisticNode>();
