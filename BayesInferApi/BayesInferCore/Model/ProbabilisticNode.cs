@@ -13,9 +13,9 @@ namespace BayesInferCore.Model
 		public List<ProbabilisticNode> Parents { get; private set; }
 		public List<ProbabilisticNode> Children { get; private set; }
 		public List<String> States { get; set; }
-		public List<ProbabilisticNode> Adjacents { get; private set; }
-		public ProbabilisticNodeTable PriorTabelaNode { get; private set; }
-		public List<ProbabilisticNodeState> PosteriorTabelaNode { get; private set; }
+		public List<ProbabilisticNode> Adjacents { get;  set; }
+		public ProbabilisticNodeTable PriorTabelaNode { get;}
+		public List<ProbabilisticNodeState> PosteriorTabelaNode { get;}
 
 		public int? BeliefValue { get; set; }
 
@@ -54,7 +54,6 @@ namespace BayesInferCore.Model
 				Adjacents.Add(adjs);
 			}
 		}
-
 		public void RemoveChild(ProbabilisticNode child)
 		{
 			lock (lockObj)

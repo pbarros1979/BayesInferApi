@@ -14,9 +14,7 @@ namespace BayesInferCore.Services
 	{
 		private bool _geraLog;
 		FileBayesianNetwork _redeBayesiana;
-
 		private List<Clique> _cliques;
-
 		/**
 		 *  List of Associated separatorsMap.
 		 */
@@ -599,6 +597,13 @@ namespace BayesInferCore.Services
 		}
 		public void FowardPropagation()
 		{
+
+			do
+			{
+
+			} while (true);
+
+
 			Clique auxClique;
 
 			for (int i = 0; i < _cliques.Count(); i++)
@@ -717,7 +722,6 @@ namespace BayesInferCore.Services
 		public void InitBelief()
 		{
 			Clique auxClique;
-
 			for (int i = 0; i < _cliques.Count(); i++)
 			{
 				auxClique = _cliques[i];
@@ -839,7 +843,6 @@ namespace BayesInferCore.Services
 			});
 			FowardPropagation();
 			InitBelief();
-
 			return TranformModel(probabilisticNet);
 		}
 		private FileBayesianNetwork TranformModel(ProbabilisticNetwork probabilisticNet)
