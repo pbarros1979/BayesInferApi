@@ -36,7 +36,7 @@ namespace BayesInferApi.Controllers
         [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
         public async Task<ActionResult> Index()
         {
-            return View(await _context.ArquivosRedeBayesiana.ToListAsync());
+			return View(await _context.ArquivosRedeBayesiana.ToListAsync());
         }
         [HttpPost]
         public ActionResult Create(NodeBelief nodeBelief)
@@ -58,6 +58,7 @@ namespace BayesInferApi.Controllers
         // GET: NetworkNodeBelief/Create
         public ActionResult Create(int id)
         {
+
             _nodeBeliefService.IdRede= id;
             ArquivoRedeBayesiana arquivoRedeBayesiana = _context.ArquivosRedeBayesiana.Find(id);
 
