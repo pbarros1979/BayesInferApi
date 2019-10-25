@@ -33,6 +33,7 @@ namespace BayesInferCore.Model
 		 *  Lista de Nos Clusterizados
 		 */
 		public List<ProbabilisticNode> Nodes { get; set; }
+		public List<ProbabilisticNode> AssociatedNodes { get; set; }
 
 
 		/**
@@ -43,7 +44,7 @@ namespace BayesInferCore.Model
 		{
 			Children = new List<Clique>();
 			Nodes = new List<ProbabilisticNode>();
-			//associatedNodes = new List<ProbabilisticNode>();
+			AssociatedNodes = new List<ProbabilisticNode>();
 			PotentialTable = new List<ProbabilisticTable>();
 		}
 
