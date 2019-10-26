@@ -6,13 +6,13 @@ namespace BayesInferCore.Model
 {
 	public class Clique
 	{
+		public enum Stage { Empty=1, CollectEvidence=2, DistributeEvidences=3 }
 
 		/**
 		 *  It identifies the clique uniquely if the network is connected. If disconnected, then the uniqueness is not guaranteed.
 		 */
 		public  int Index { get; set; }
 
-		//    private int internalIdentificator = Integer.MIN_VALUE;
 
 		/**
 		 *  Referencia para o clique pai.
@@ -35,7 +35,7 @@ namespace BayesInferCore.Model
 		public List<ProbabilisticNode> Nodes { get; set; }
 		public List<ProbabilisticNode> AssociatedNodes { get; set; }
 
-
+		public Stage CliqueStage { get; set; }
 		/**
 		 * Creates a new clique. Initializes array of children, array of cluster
 		 * nodes, and associated nodes. The association status is set to false.
@@ -46,6 +46,7 @@ namespace BayesInferCore.Model
 			Nodes = new List<ProbabilisticNode>();
 			AssociatedNodes = new List<ProbabilisticNode>();
 			PotentialTable = new List<ProbabilisticTable>();
+			CliqueStage = Stage.Empty;
 		}
 
 
