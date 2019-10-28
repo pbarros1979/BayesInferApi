@@ -15,6 +15,8 @@ namespace BayesInferCore.Model
 			Index = ix;
 			TableCliqueSeparators = new List<TableCliqueSeparator>();
 		}
+
+
 		
 
 	}
