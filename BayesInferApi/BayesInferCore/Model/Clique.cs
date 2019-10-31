@@ -29,6 +29,9 @@ namespace BayesInferCore.Model
 		 */
 		public List<ProbabilisticTable> PotentialTable { get; set; }
 
+
+		public PotentialTable Potential { get; set; }
+
 		/**
 		 *  Lista de Nos Clusterizados
 		 */
