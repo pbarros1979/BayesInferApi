@@ -9,8 +9,13 @@ namespace BayesInferCore.Model
 	{
 		public enum OPERATOR { PRODUCT=0, DIVISION = 1, PLUS = 2, MINUS = 3 }
 
-		public OPERATOR OperatorTable { get; set; }
+		//public OPERATOR OperatorTable { get; set; }
 		public List<TableLine> Line{ get; set; }
+
+		public PotentialTable()
+		{
+			Line = new List<TableLine>();
+		}
 
 
 		//public float normalize()

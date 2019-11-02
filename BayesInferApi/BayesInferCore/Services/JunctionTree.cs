@@ -286,10 +286,8 @@ namespace BayesInferCore.Services
 			int numCliques = generatedCliques.Count;
 			CliqueNodesComparer cliqueComparer = new CliqueNodesComparer();
 			generatedCliques.Sort(cliqueComparer);
-			//generatedCliques = generatedCliques.OrderBy(x => x.Nodes.Count()).ToList();
 
 			// considere apenas cliques que não estão totalmente contidos em outra clique (por exemplo, se houver clique {A, B} e {A, B, C}, considere apenas {A, B, C} e descarte {A, B})
-			int indexClique = 0;
 			for (int i = 0; i < numCliques; i++)
 			{
 				bool valid = true;
@@ -496,9 +494,11 @@ namespace BayesInferCore.Services
 					numNodeState *= item.States.Count();
 				}
 				auxClique.PotentialTable = new List<ProbabilisticTable>();
+				auxClique.Potential = new PotentialTable();
 				for (int l = 0; l < numNodeState; l++)
 				{
 					auxClique.PotentialTable.Add(new ProbabilisticTable(l));
+					auxClique.Potential.Line.Add(new TableLine());
 				}
 				for (int j = 0; j < auxClique.Nodes.Count(); j++)
 				{
@@ -516,6 +516,7 @@ namespace BayesInferCore.Services
 
 						string stateString = auxClique.Nodes[j].States[ixState];
 						auxClique.PotentialTable[k].TableCliqueSeparators.Add(new TableCliqueSeparator(stateString, _cliques[i].Nodes[j]));
+						auxClique.Potential.Line[k].AddColumn(0, _cliques[i].Nodes[j], stateString);
 					}
 				}
 			}
@@ -529,9 +530,11 @@ namespace BayesInferCore.Services
 					numNodeState *= item.States.Count();
 				}
 				auxSeparator.PotentialTable = new List<ProbabilisticTable>();
+				auxSeparator.Potential = new PotentialTable();
 				for (int m = 0; m < numNodeState; m++)
 				{
 					auxSeparator.PotentialTable.Add(new ProbabilisticTable(m));
+					auxSeparator.Potential.Line.Add(new TableLine());
 				}
 				for (int j = 0; j < auxSeparator.Nodes.Count(); j++)
 				{
@@ -549,6 +552,7 @@ namespace BayesInferCore.Services
 
 						string stateString = auxSeparator.Nodes[j].States[ixState];
 						auxSeparator.PotentialTable[k].TableCliqueSeparators.Add(new TableCliqueSeparator(stateString, _separators[i].Nodes[j]));
+						auxSeparator.Potential.Line[k].AddColumn(0, _separators[i].Nodes[j], stateString);
 					}
 
 				}
@@ -826,6 +830,22 @@ namespace BayesInferCore.Services
 						SetProbTableClic(tableLine, exceptNode, clique1);
 
 					}
+					//percorre tabela separador para atualizar valores da tabela do clique que possuem o valor do estado 
+					foreach (var linhaSep in sep.Potential.Line)
+					{
+						foreach (var columnSep in linhaSep.Column)
+						{
+							//percorre tabela do clique para atualizar valor do separador no estado em questão
+							foreach (var linhaCliq in clique1.Potential.Line)
+							{
+								foreach (var columnCliq in linhaCliq.Column.Where(c=>c.NodeBase.Equals(columnSep.NodeBase)))
+								{
+									columnCliq.Value = columnSep.Value;
+								}
+
+							}
+						}
+					}
 				}
 			}
 		}
@@ -925,6 +945,7 @@ namespace BayesInferCore.Services
 				}
 			}
 		}
+
 		private void SetProbTableClic(ProbabilisticTable probabilisticTable, List<ProbabilisticNode> exceptNodes, Clique clique)
 		{
 			foreach (var linha in clique.PotentialTable)
