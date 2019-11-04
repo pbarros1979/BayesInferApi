@@ -6,14 +6,13 @@ namespace BayesInferCore.Model
 {
 	public class Clique
 	{
-		public enum Stage { Empty=1, CollectEvidence=2, DistributeEvidences=3 }
-
+		
 		/**
 		 *  It identifies the clique uniquely if the network is connected. If disconnected, then the uniqueness is not guaranteed.
 		 */
 		public  int Index { get; set; }
 
-
+		
 		/**
 		 *  Referencia para o clique pai.
 		 */

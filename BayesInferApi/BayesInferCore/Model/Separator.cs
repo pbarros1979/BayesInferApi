@@ -7,6 +7,8 @@ namespace BayesInferCore.Model
 {
 	public class Separator
 	{
+
+		
 		public List<ProbabilisticTable> PotentialTable { get; set; }
 
 		public PotentialTable Potential { get; set; }
@@ -16,11 +18,13 @@ namespace BayesInferCore.Model
 		public Clique clique1 { get; set; }
 
 		public Clique clique2 { get; set; }
+		public Stage SepStage { get; set; }
 
 		private Separator()
 		{
-			Nodes = new List<ProbabilisticNode>();
-			PotentialTable = new List<ProbabilisticTable>();
+			this.Nodes = new List<ProbabilisticNode>();
+			this.PotentialTable = new List<ProbabilisticTable>();
+			this.SepStage = Stage.Empty;
 		}
 
 		public Separator(Clique clique1, Clique clique2, bool updateClic)
@@ -29,6 +33,7 @@ namespace BayesInferCore.Model
 			PotentialTable = new List<ProbabilisticTable>();
 			this.clique1 = clique1;
 			this.clique2 = clique2;
+			this.SepStage = Stage.Empty;
 			if (updateClic)
 			{
 				this.clique2.Parent = clique1;
@@ -67,12 +72,6 @@ namespace BayesInferCore.Model
 					this.PotentialTable[i].Prob = 0;
 				}
 			}
-		}
-
-		public bool ValidPotential()
-		{
-			var pot = PotentialTable.Where(p => p.Prob > 0);
-			return pot.Count() > 0;
 		}
 	}
 }

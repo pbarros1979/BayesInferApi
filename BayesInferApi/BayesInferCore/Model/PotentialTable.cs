@@ -7,7 +7,7 @@ namespace BayesInferCore.Model
 
 	public class PotentialTable
 	{
-		public enum OPERATOR { PRODUCT=0, DIVISION = 1, PLUS = 2, MINUS = 3 }
+		//public enum OPERATOR { PRODUCT=0, DIVISION = 1, PLUS = 2, MINUS = 3 }
 
 		//public OPERATOR OperatorTable { get; set; }
 		public List<TableLine> Line{ get; set; }
