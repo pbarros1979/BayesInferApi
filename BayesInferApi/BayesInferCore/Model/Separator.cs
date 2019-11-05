@@ -11,8 +11,6 @@ namespace BayesInferCore.Model
 		
 		public List<ProbabilisticTable> PotentialTable { get; set; }
 
-		public PotentialTable Potential { get; set; }
-
 		public List<ProbabilisticNode> Nodes { get; set; }
 
 		public Clique clique1 { get; set; }
