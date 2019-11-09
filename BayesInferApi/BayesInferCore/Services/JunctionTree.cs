@@ -526,6 +526,7 @@ namespace BayesInferCore.Services
 						if (columnCliq.NodeBase.BeliefValue != null)
 						{
 							columnCliq.StateBaseValue = (float)columnCliq.NodeBase.BeliefValue;
+							columnCliq.InitializedValue = true;
 						}
 						else if (columnCliq.NodeBase.Parents.Count() > 0)
 						{
@@ -537,24 +538,27 @@ namespace BayesInferCore.Services
 							if (parentsInCliqNode.Count() > 0)
 							{
 								columnCliq.StateBaseValue = GetValuePriorTableNode(columnCliq.NodeBase, columnCliq.StateBase, linhaCliq);
-								
+								columnCliq.InitializedValue = true;
+
 							}
 							else //se clique não possui parents não é possivel calcular valor pois sera atualizado via separador, sendo assim valor=0
 							{
 								columnCliq.StateBaseValue = 0;
+								//não é possove calcular sem propagar 
+								columnCliq.InitializedValue = false;
 							}
 						}
 						else
 						{
 							//pega valor do nodo para o estado em questão
 							columnCliq.StateBaseValue = columnCliq.NodeBase.PriorTabelaNode.TableNodeStates.Where(n => n.StateBase.Equals(columnCliq.StateBase)).Select(n => n.StateBaseValue).FirstOrDefault();
+							columnCliq.InitializedValue = true;
 						}
-
-
 					}
-
 				}
+				UpdateInitializedClique(auxClique);
 			}
+			
 			for (int i = 0; i < _separators.Count; i++)
 			{
 				auxSeparator = _separators[i];
@@ -591,6 +595,17 @@ namespace BayesInferCore.Services
 				}
 			}
 		}
+		private void UpdateInitializedClique(Clique clique)
+		{
+			foreach (var linha in clique.PotentialTable)
+			{
+				linha.Prob.Clear();
+				foreach (var prob in linha.TableCliqueSeparators.Where(i=>i.InitializedValue).Select(p=>p.StateBaseValue))
+				{
+					linha.Prob.Add(prob);
+				}
+			}
+		}
 		private bool ContainsExact(List<ProbabilisticNode> collection, ProbabilisticNode o)
 		{
 			foreach (var obj in collection)
@@ -623,116 +638,6 @@ namespace BayesInferCore.Services
 			}
 			return true;
 		}
-		public void FowardPropagation()
-		{
-
-			Clique auxClique;
-			int pend = 0;
-
-			//for (int i = _cliques.Count() - 1; i >= 0; i--)
-			for (int i = 0; i < _cliques.Count(); i++)
-			{
-				auxClique = _cliques[i];
-				//Retorna separador anterior ao clique
-				var sepPrevious = _separators.Where(s => s.clique2.Index == auxClique.Index);
-				//Retorna separador posterior ao clique
-				var sepLater = _separators.Where(s => s.clique1.Equals(auxClique));
-				//Verifica se é primeiro clique (não existe separador que leve a este clique)
-				if (sepPrevious.Count() == 0)
-				{
-					for (int m = 0; m < auxClique.PotentialTable.Count; m++)
-					{
-						auxClique.PotentialTable[m].Prob = 1;
-						foreach (var item in auxClique.PotentialTable[m].TableCliqueSeparators)
-						{
-							//Verifica se existe crença definida
-							if (item.NodeBase.BeliefValue == null)
-							{
-								//Verifica se nodo do clique possui pai, caso não tenha a tabela possui apenas probabilidadse do estado do nodo
-								if (item.NodeBase.Parents.Count == 0)
-								{
-
-									var a = item.NodeBase.PriorTabelaNode.TableNodeStates.Where(n => n.StateBase == item.StateBase).FirstOrDefault();
-									item.StateBaseValue = a.StateBaseValue;
-
-
-								}
-								else
-								{
-									List<TableNodeState> tableNodeStates = item.NodeBase.PriorTabelaNode.TableNodeStates.Where(n => n.StateBase == item.StateBase).ToList();
-									//Se nodo do clique possui pais a tabela possui apenas probabilidadse do estado do nodo
-									foreach (var tableNodeState in tableNodeStates)
-									{
-										bool valueOk = true;
-										foreach (var stateParent in tableNodeState.NodeStatesParent)
-										{
-											var parent = auxClique.PotentialTable[m].TableCliqueSeparators.Where(n => n.NodeBase.Name == stateParent.NodeValue.Name && n.StateBase == stateParent.StateString).FirstOrDefault();
-											if (parent == null)
-											{
-												valueOk = false;
-												break;
-											}
-										}
-										if (valueOk)
-										{
-											item.StateBaseValue = tableNodeState.StateBaseValue;
-											break;
-										}
-									}
-									//}
-								}
-							}
-							else
-							{
-								//Existindo crença ustiliza crença para calculo de probabilidade
-								item.StateBaseValue = (int)item.NodeBase.BeliefValue;
-							}
-							auxClique.PotentialTable[m].Prob *= item.StateBaseValue;
-						}
-
-						foreach (var sep in sepLater)
-						{
-							List<ProbabilisticNode> intersectNodes = auxClique.Nodes.Intersect(sep.Nodes).ToList();
-							List<TableCliqueSeparator> tmpProbTables = new List<TableCliqueSeparator>();
-							foreach (var node in intersectNodes)
-							{
-								TableCliqueSeparator table = auxClique.PotentialTable[m].TableCliqueSeparators.Where(t => t.NodeBase.Equals(node)).FirstOrDefault();
-								tmpProbTables.Add(table);
-							}
-							SetProbTableSeparator(tmpProbTables, sep, auxClique.PotentialTable[m].Prob);
-						}
-					}
-
-				}
-				else
-				{
-					foreach (var sep in sepPrevious)
-					{
-						List<ProbabilisticNode> exceptNodes = auxClique.Nodes.Except(sep.Nodes).ToList();
-						foreach (var tableLine in sep.PotentialTable)
-						{
-							SetProbTableClic(tableLine, exceptNodes, auxClique);
-
-						}
-					}
-					for (int m = 0; m < auxClique.PotentialTable.Count; m++)
-					{
-						foreach (var sep in sepLater)
-						{
-							List<ProbabilisticNode> intersectNodes = auxClique.Nodes.Intersect(sep.Nodes).ToList();
-							List<TableCliqueSeparator> tmpProbTables = new List<TableCliqueSeparator>();
-							foreach (var node in intersectNodes)
-							{
-								TableCliqueSeparator table = auxClique.PotentialTable[m].TableCliqueSeparators.Where(t => t.NodeBase.Equals(node)).FirstOrDefault();
-								tmpProbTables.Add(table);
-							}
-							SetProbTableSeparator(tmpProbTables, sep, auxClique.PotentialTable[m].Prob);
-						}
-					}
-				}
-
-			}
-		}
 		private void CollectEvidence(Clique clique)
 		{
 			foreach (var auxClique in clique.Children)
@@ -745,33 +650,13 @@ namespace BayesInferCore.Services
 		{
 			foreach (Clique auxClique in clique.Children)
 			{
-				AbsorbDistribute(auxClique, clique);
+				Absorb(auxClique, clique);
 				DistributeEvidences(auxClique);
 			}
 		}
 		private void Absorb(Clique clique1, Clique clique2)
 		{
-			//Verifica se existe separador anterior ao clic e calcula valor inicial para clique
-			var separatorPrevious = _separators.Where(s => s.clique1.Index == clique2.Index);
-			if (separatorPrevious != null && separatorPrevious.Count() > 0)
-			{
-				if (separatorPrevious.Where(s => s.SepStage == Stage.CollectEvidence).Count() != separatorPrevious.Count())
-				{
-					return;
-				}
-				foreach (var sep in separatorPrevious)
-				{
-					List<ProbabilisticNode> exceptNodesClique2 = clique2.Nodes.Except(sep.Nodes).ToList();
-					foreach (var tableLine in sep.PotentialTable)
-					{
-						SetProbTableClic(tableLine, exceptNodesClique2, clique2);
 
-					}
-					sep.SepStage = Stage.CollectEvidence;
-				}
-
-			}
-			
 			//Recupera separador entre clique 1 e 2 
 			Separator separator = GetSeparator(clique1, clique2);
 			for (int m = 0; m < clique2.PotentialTable.Count; m++)
@@ -784,116 +669,32 @@ namespace BayesInferCore.Services
 					TableCliqueSeparator table = clique2.PotentialTable[m].TableCliqueSeparators.Where(t => t.NodeBase.Equals(node)).FirstOrDefault();
 					tmpProbTables.Add(table);
 				}
-				SetProbTableSeparator(tmpProbTables, separator, clique2.PotentialTable[m].Prob);
+				SetTableSeparator(tmpProbTables, separator, clique2.PotentialTable[m].GetProductProb());
 			}
-			//for (int m = 0; m < clique2.Potential.Line.Count; m++)
+
+			separator.SepStage = Stage.CollectEvidence;
+			List<ProbabilisticNode> exceptNodesC1 = clique1.Nodes.Except(separator.Nodes).ToList();
+			foreach (var linha in separator.PotentialTable)
+			{
+				SetProbClique(linha, exceptNodesC1, clique1);
+			}
+			clique1.CliqueStage = Stage.CollectEvidence;
+
+
+
+			//Verifica se é ultimo clic
+			//if (clique1.Parent == null)
 			//{
-			//	bool colLineValid = false;
-			//	foreach (var line in separator.Potential.Line)
+			//	//Verifica se ja foram calculados todos os cliques e separadores filhos do clique1
+			//	var sepPreviousClique1 = _separators.Where(s => s.clique1.Equals(clique1));
+			//	if (sepPreviousClique1 != null)
 			//	{
-			//		colLineValid = true;
-			//		foreach (var column in line.Column)
+			//		if (sepPreviousClique1.Where(s => s.SepStage == Stage.CollectEvidence).Count() != sepPreviousClique1.Count())
 			//		{
-			//			var tmp = clique2.Potential.Line[m].Column.FirstOrDefault(n => n.NodeBase.Equals(column.NodeBase));
-			//			if (column.StateBase != tmp.StateBase)
-			//			{
-			//				colLineValid = false;
-			//			}
-			//		}
-			//		if (colLineValid)
-			//		{
-			//			line.SeparatorValue += clique2.Potential.Line[m].GetColumnProduct();
+			//			return;
 			//		}
 			//	}
 			//}
-			//Verifica se é ulriumo clic
-			if (clique1.Parent == null)
-			{
-				//Verifica se ja foram calculados todos os cliques e separadores filhos do clique1
-				var sepPreviousClique1 = _separators.Where(s => s.clique1.Equals(clique1));
-				if (sepPreviousClique1 != null)
-				{
-					if (sepPreviousClique1.Where(s => s.SepStage == Stage.CollectEvidence).Count() != sepPreviousClique1.Count())
-					{
-						return;
-					}
-				}
-				foreach (var sep in sepPreviousClique1)
-				{
-					List<ProbabilisticNode> exceptNode = clique1.Nodes.Except(sep.Nodes).ToList();
-					foreach (var tableLine in sep.PotentialTable)
-					{
-						SetProbTableClic(tableLine, exceptNode, clique1);
-
-					}
-					
-					sep.SepStage = Stage.CollectEvidence;
-				}
-			}
-		}
-		private void AbsorbDistribute(Clique clique1, Clique clique2)
-		{
-			//Verifica se existe separador anterior ao clic e calcula valor inicial para clique
-			var separatorPrevious = _separators.Where(s => s.clique2.Index == clique2.Index);
-			if (separatorPrevious != null && separatorPrevious.Count() > 0)
-			{
-				if (separatorPrevious.Where(s => s.SepStage == Stage.DistributeEvidences).Count() != separatorPrevious.Count())
-				{
-					return;
-				}
-				foreach (var sep in separatorPrevious)
-				{
-					List<ProbabilisticNode> exceptNodesClique2 = clique2.Nodes.Except(sep.Nodes).ToList();
-					foreach (var tableLine in sep.PotentialTable)
-					{
-						UpdateProbTableClic(tableLine, exceptNodesClique2, clique2);
-
-					}
-					sep.SepStage = Stage.DistributeEvidences;
-				}
-
-			}
-			//Recupera separador entre clique 1 e 2 
-			Separator separator = GetSeparatorNoDirection(clique1, clique2);
-			//Clona Separador para posteriormente dividir msg
-			Separator separatorCloned = separator.Clone();
-			for (int m = 0; m < clique2.PotentialTable.Count; m++)
-			{
-				//atualiza valores para tabela do separador em função do clic2
-				List<ProbabilisticNode> intersectNodes = clique2.Nodes.Intersect(separatorCloned.Nodes).ToList();
-				List<TableCliqueSeparator> tmpProbTables = new List<TableCliqueSeparator>();
-				foreach (var node in intersectNodes)
-				{
-					TableCliqueSeparator table = clique2.PotentialTable[m].TableCliqueSeparators.Where(t => t.NodeBase.Equals(node)).FirstOrDefault();
-					tmpProbTables.Add(table);
-				}
-				SetProbTableSeparator(tmpProbTables, separatorCloned, clique2.PotentialTable[m].Prob);
-			}
-			//Divide mensagem
-			separator.Divide(separatorCloned);
-
-			//Verifica se é ultiumo clic
-			if (clique1.Children.Count() == 0)
-			{
-				//Verifica se ja foram calculados todos os cliques e separadores filhos do clique1
-				var sepPreviousClique1 = _separators.Where(s => s.clique2.Equals(clique1));
-				if (sepPreviousClique1 != null)
-				{
-					if (sepPreviousClique1.Where(s => s.SepStage == Stage.DistributeEvidences).Count() != sepPreviousClique1.Count())
-					{
-						return;
-					}
-				}
-				foreach (var sep in sepPreviousClique1)
-				{
-					List<ProbabilisticNode> exceptNode = clique1.Nodes.Except(sep.Nodes).ToList();
-					foreach (var tableLine in sep.PotentialTable)
-					{
-						UpdateProbTableClic(tableLine, exceptNode, clique1);
-					}
-					sep.SepStage = Stage.DistributeEvidences;
-				}
-			}
 		}
 		public void InitBelief()
 		{
@@ -913,14 +714,14 @@ namespace BayesInferCore.Services
 								var prob = node.PosteriorTabelaNode.Find(p => p.StateBase == col.StateBase);
 								if (prob != null)
 								{
-									prob.StateBaseValue += linha.Prob;
+									//prob.StateBaseValue += linha.Prob;
 								}
 								else
 								{
 									node.PosteriorTabelaNode.Add(new ProbabilisticNodeState()
 									{
 										StateBase = col.StateBase,
-										StateBaseValue = linha.Prob
+										//StateBaseValue = linha.Prob
 									});
 								}
 							}
@@ -937,7 +738,7 @@ namespace BayesInferCore.Services
 		/// <param name="state">Estado desejado para busca</param>
 		/// <param name="lineCliqueSeparator">Linha da tabela do clique para recuperar estados valido</param>
 		/// <returns></returns>
-		public float GetValuePriorTableNode(ProbabilisticNode node, string state, ProbabilisticTable lineCliqueSeparator )
+		public float GetValuePriorTableNode(ProbabilisticNode node, string state, ProbabilisticTable lineCliqueSeparator)
 		{
 			float returnValue = 0;
 			//pega valores da tabela a priori do nodo para o estado da tabela do clique
@@ -958,98 +759,13 @@ namespace BayesInferCore.Services
 				if (colLineValid)
 				{
 					returnValue = col.StateBaseValue;
+					break;
 				}
 			}
 			return returnValue;
 		}
 
-		private void SetProbTableClic(ProbabilisticTable probabilisticTable, List<ProbabilisticNode> exceptNodes, Clique clique)
-		{
-			foreach (var linha in clique.PotentialTable)
-			{
-				bool valid = true;
-				//linha.Prob = 1;
-				foreach (var col in linha.TableCliqueSeparators)
-				{
-					var orig = probabilisticTable.TableCliqueSeparators.Find(n => n.NodeBase.Equals(col.NodeBase));
-					//verifica se resultado da linha de propbabilidade do clique existe na tabela do separador
-					if (orig != null)
-					{
-						//verifica se estado do no do clique na tabela de porbabilidade é igual ao estado do no no separador na tabela de propbabilidade, caso diferente não considera esta linha
-						if (orig.StateBase != col.StateBase)
-						{
-							valid = false;
-							break;
-						}
-					}
-				}
-				if (valid)
-				{
-					//caso valido percorre nodos do clique que não estão no separator para pegar o valor do no para o estado corrente
-					foreach (var col in exceptNodes)
-					{
-						//Verifica se existe crença definida para o nodo em questão
-						if (col.BeliefValue == null)
-						{
-							//Busca coluna na linha do clic que no não esta no separador
-							var clicTableSel = linha.TableCliqueSeparators.Find(n => n.NodeBase.Equals(col));
-							//No no vai na tabela de probabilidade a priori do nodo e pega os estados e nos (parent) relacionados para o estado do no corrente (relativo ao estado que esta na tabela do clic selecionado)
-							var estadosParentNo = clicTableSel.NodeBase.PriorTabelaNode.TableNodeStates.Where(s => s.StateBase == clicTableSel.StateBase);
-							foreach (var tableNodeState in estadosParentNo)
-							{
-								bool validState = true;
-								foreach (var item in tableNodeState.NodeStatesParent)
-								{
-									var parent = probabilisticTable.TableCliqueSeparators.Where(n => n.NodeBase.Equals(item.NodeValue) && n.StateBase == item.StateString);
-									if (parent.Count() == 0)
-									{
-										validState = false;
-										break;
-									}
-								}
-								if (validState)
-								{
-									linha.Prob += (probabilisticTable.Prob * tableNodeState.StateBaseValue);
-
-								}
-							}
-						}
-						else
-						{
-							//Existindo crença ustiliza crença para calculo de probabilidade
-							linha.Prob += (probabilisticTable.Prob * (int)col.BeliefValue);
-						}
-					}
-				}
-			}
-		}
-		private void UpdateProbTableClic(ProbabilisticTable probabilisticTable, List<ProbabilisticNode> exceptNodes, Clique clique)
-		{
-			foreach (var linha in clique.PotentialTable)
-			{
-				bool valid = true;
-				//linha.Prob = 1;
-				foreach (var col in linha.TableCliqueSeparators)
-				{
-					var orig = probabilisticTable.TableCliqueSeparators.Find(n => n.NodeBase.Equals(col.NodeBase));
-					//verifica se resultado da linha de propbabilidade do clique existe na tabela do separador
-					if (orig != null)
-					{
-						//verifica se estado do no do clique na tabela de porbabilidade é igual ao estado do no no separador na tabela de propbabilidade, caso diferente não considera esta linha
-						if (orig.StateBase != col.StateBase)
-						{
-							valid = false;
-							break;
-						}
-					}
-				}
-				if (valid)
-				{
-					linha.Prob = (probabilisticTable.Prob * linha.Prob);
-				}
-			}
-		}
-		private void SetProbTableSeparator(List<TableCliqueSeparator> tableCliqueSeparator, Separator separator, float prob)
+		private void SetTableSeparator(List<TableCliqueSeparator> tableCliqueSeparator, Separator separator, float prob)
 		{
 			foreach (var linha in separator.PotentialTable)
 			{
@@ -1065,42 +781,35 @@ namespace BayesInferCore.Services
 				}
 				if (valid)
 				{
-
-					linha.Prob += prob;
+					linha.Prob.Add(prob);
 				}
 			}
 		}
-		private void SetProbTableClique(List<TableCliqueSeparator> tableCliqueSeparator, Clique clique, float prob)
+		private void SetProbClique(ProbabilisticTable linhaSeparator, List<ProbabilisticNode> exceptNodes, Clique clique)
 		{
 			foreach (var linha in clique.PotentialTable)
 			{
 				bool valid = true;
 				foreach (var col in linha.TableCliqueSeparators)
 				{
-					var orig = tableCliqueSeparator.Find(n => n.NodeBase.Name == col.NodeBase.Name);
-					if (orig.StateBase != col.StateBase)
+					var orig = linhaSeparator.TableCliqueSeparators.FirstOrDefault(n => n.NodeBase.Equals(col.NodeBase));
+					if (orig != null && orig.StateBase != col.StateBase)
 					{
 						valid = false;
 						break;
 					}
 				}
+				//Encontrou a linha valida do clique
 				if (valid)
 				{
-					//verifica se valor atual esta zerado, caso positivo soma para não zerar
-					if (linha.Prob == 0)
-					{
-						linha.Prob += prob;
-					}
-					else
-					{
-						linha.Prob *= prob;
-					}
-					
+					linha.Prob.Add(linhaSeparator.GetSumProb());
 				}
+
 			}
 		}
 		public Separator GetSeparator(Clique clique1, Clique clique2)
 		{
+
 			return _separators.FirstOrDefault(s => s.clique2.Index == clique2.Index && s.clique1.Index == clique1.Index);
 		}
 		public IEnumerable<Separator> GetAllSeparatorNoDirection(Clique clique1, Clique clique2)

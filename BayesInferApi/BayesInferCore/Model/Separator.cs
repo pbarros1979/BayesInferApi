@@ -49,10 +49,12 @@ namespace BayesInferCore.Model
 				ProbabilisticTable probabilisticTable = new ProbabilisticTable(pot.Index);
 				foreach (var cliqueSeparator in pot.TableCliqueSeparators)
 				{
+					var tmp = new TableCliqueSeparator(cliqueSeparator.StateBase, cliqueSeparator.NodeBase);
+					tmp.StateBaseValue = cliqueSeparator.StateBaseValue;
 					probabilisticTable.TableCliqueSeparators.Add(cliqueSeparator);
 					
 				}
-				probabilisticTable.Prob = 0;
+				
 				sep.PotentialTable.Add(probabilisticTable);
 			}
 			return sep;
@@ -61,13 +63,17 @@ namespace BayesInferCore.Model
 		{
 			for (int i = 0; i < this.PotentialTable.Count(); i++)
 			{
-				if (separator.PotentialTable[i].Prob != 0)
+				if (separator.PotentialTable[i].GetSumProb() != 0)
 				{
-					this.PotentialTable[i].Prob /= separator.PotentialTable[i].Prob;
+					float tmp = this.PotentialTable[i].GetSumProb() / separator.PotentialTable[i].GetSumProb();
+
+					this.PotentialTable[i].Prob.Clear();
+					this.PotentialTable[i].Prob.Add(tmp);
 				}
 				else
 				{
-					this.PotentialTable[i].Prob = 0;
+					this.PotentialTable[i].Prob.Clear();
+					this.PotentialTable[i].Prob.Add(0);
 				}
 			}
 		}

@@ -28,6 +28,7 @@ namespace BayesInferCore.Model
 		 */
 		public List<ProbabilisticTable> PotentialTable { get; set; }
 
+
 		/**
 		 *  Lista de Nos Clusterizados
 		 */
@@ -48,20 +49,46 @@ namespace BayesInferCore.Model
 			CliqueStage = Stage.Empty;
 		}
 
+		public bool InitializedClique
+		{
+			get
+			{
+				foreach (var linha in PotentialTable)
+				{
+					foreach (var coluna in linha.TableCliqueSeparators)
+					{
+						if (!coluna.InitializedValue)
+						{
+							return false;
+						}
+
+					}
+				}
+				return true;
+			}
+		}
 
 		public void Normalize()
 		{
 			float n = 0;
-			float valor;
+			float valor=0.0F;
 			foreach (var item in PotentialTable)
 			{
-				n += item.Prob;
+				foreach (var valProb in item.Prob)
+				{
+					n += valProb;
+				}
+				
 			}
 			if (Math.Abs(n - 1.0) > 0.00005)
 			{
 				foreach (var item in PotentialTable)
 				{
-					valor = item.Prob;
+					foreach (var valProb in item.Prob)
+					{
+						valor = valProb;
+					}
+					
 					if (valor == 0.0)
 					{
 						// zeros will remain always zero.
@@ -69,7 +96,8 @@ namespace BayesInferCore.Model
 					}
 
 					valor /= n;
-					item.Prob = valor;
+					item.Prob.Clear();
+					item.Prob.Add(valor);
 				}
 			}
 		}

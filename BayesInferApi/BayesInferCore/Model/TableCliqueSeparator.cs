@@ -9,11 +9,13 @@ namespace BayesInferCore.Model
 		public ProbabilisticNode NodeBase { get;  set; }
 		public string StateBase { get;  set; }
 		public float StateBaseValue { get; set; }
-		
+		public bool InitializedValue { get; set; }
+
 		public TableCliqueSeparator(string stateBase , ProbabilisticNode nodeBase )
 		{
 			NodeBase = nodeBase;
 			StateBase = stateBase;
+			InitializedValue = false;
 		}
 
 	}
