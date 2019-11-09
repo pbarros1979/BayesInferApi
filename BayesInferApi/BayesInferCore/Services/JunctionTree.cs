@@ -658,7 +658,13 @@ namespace BayesInferCore.Services
 		{
 
 			//Recupera separador entre clique 1 e 2 
-			Separator separator = GetSeparator(clique1, clique2);
+			Separator separator = GetSeparatorNoDirection(clique1, clique2);
+			
+			if (separator.InitializedSeparator)
+			{
+				separator.Clone();
+				separator.ClearTableProb();
+			}
 			for (int m = 0; m < clique2.PotentialTable.Count; m++)
 			{
 				//atualiza valores para tabela do separador em função do clic2
@@ -671,14 +677,16 @@ namespace BayesInferCore.Services
 				}
 				SetTableSeparator(tmpProbTables, separator, clique2.PotentialTable[m].GetProductProb());
 			}
-
-			separator.SepStage = Stage.CollectEvidence;
-			List<ProbabilisticNode> exceptNodesC1 = clique1.Nodes.Except(separator.Nodes).ToList();
+			if (separator.SeparatorClone != null && separator.SeparatorClone.InitializedSeparator)
+			{
+				separator.Divide(separator.SeparatorClone);
+			}
+				List<ProbabilisticNode> exceptNodesC1 = clique1.Nodes.Except(separator.Nodes).ToList();
 			foreach (var linha in separator.PotentialTable)
 			{
 				SetProbClique(linha, exceptNodesC1, clique1);
 			}
-			clique1.CliqueStage = Stage.CollectEvidence;
+			
 
 
 

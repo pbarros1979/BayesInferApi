@@ -18,11 +18,21 @@ namespace BayesInferCore.Model
 		public Clique clique2 { get; set; }
 		public Stage SepStage { get; set; }
 
+		public Separator SeparatorClone { get; set; }
+
 		private Separator()
 		{
 			this.Nodes = new List<ProbabilisticNode>();
 			this.PotentialTable = new List<ProbabilisticTable>();
 			this.SepStage = Stage.Empty;
+		}
+
+		public bool InitializedSeparator
+		{
+			get
+			{
+				return PotentialTable.Where(p => p.Prob.Count > 0).ToList().Count() > 0;
+			}
 		}
 
 		public Separator(Clique clique1, Clique clique2, bool updateClic)
@@ -40,24 +50,30 @@ namespace BayesInferCore.Model
 
 		}
 
-		public Separator Clone()
+		public void ClearTableProb()
 		{
-			Separator sep = new Separator(clique1, clique2, false);
-			sep.Nodes = this.Nodes;
-			foreach (var pot in this.PotentialTable)
+			foreach (var linha in this.PotentialTable)
 			{
-				ProbabilisticTable probabilisticTable = new ProbabilisticTable(pot.Index);
-				foreach (var cliqueSeparator in pot.TableCliqueSeparators)
-				{
-					var tmp = new TableCliqueSeparator(cliqueSeparator.StateBase, cliqueSeparator.NodeBase);
-					tmp.StateBaseValue = cliqueSeparator.StateBaseValue;
-					probabilisticTable.TableCliqueSeparators.Add(cliqueSeparator);
-					
-				}
-				
-				sep.PotentialTable.Add(probabilisticTable);
+				linha.Prob.Clear();
 			}
-			return sep;
+		}
+		public void Clone()
+		{
+			SeparatorClone = new Separator(clique1, clique2, false);
+			SeparatorClone.Nodes = this.Nodes;
+			foreach (var linha in this.PotentialTable)
+			{
+				ProbabilisticTable probabilisticTable = new ProbabilisticTable(linha.Index);
+				probabilisticTable.Prob = linha.Prob;
+				foreach (var coluna in linha.TableCliqueSeparators)
+				{
+					var tmp = new TableCliqueSeparator(coluna.StateBase, coluna.NodeBase);
+					tmp.StateBaseValue = coluna.StateBaseValue;
+					tmp.InitializedValue = coluna.InitializedValue;
+					probabilisticTable.TableCliqueSeparators.Add(coluna);
+				}
+				SeparatorClone.PotentialTable.Add(probabilisticTable);
+			}
 		}
 		public void Divide(Separator separator)
 		{
