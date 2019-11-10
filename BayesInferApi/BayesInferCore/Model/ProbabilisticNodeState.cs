@@ -6,8 +6,16 @@ namespace BayesInferCore.Model
 {
 	public class ProbabilisticNodeState
 	{
+		public ProbabilisticNodeState()
+		{
 
-		private Object lockObj;
+		}
+		public ProbabilisticNodeState(ProbabilisticNodeState arg)
+		{
+			StateBase = arg.StateBase;
+			StateBaseValue = arg.StateBaseValue;
+		}
+
 		public string StateBase { get; set; }
 		public float StateBaseValue { get; set; }
 	}

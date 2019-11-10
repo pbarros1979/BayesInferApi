@@ -12,7 +12,7 @@ namespace BayesInferCore.Services
 	public class JunctionTree
 	{
 		private bool _geraLog;
-		FileBayesianNetwork _redeBayesiana;
+		//FileBayesianNetwork _redeBayesiana;
 		private List<Clique> _cliques;
 		/**
 		 *  List of Associated separatorsMap.
@@ -558,7 +558,7 @@ namespace BayesInferCore.Services
 				}
 				UpdateInitializedClique(auxClique);
 			}
-			
+
 			for (int i = 0; i < _separators.Count; i++)
 			{
 				auxSeparator = _separators[i];
@@ -600,7 +600,7 @@ namespace BayesInferCore.Services
 			foreach (var linha in clique.PotentialTable)
 			{
 				linha.Prob.Clear();
-				foreach (var prob in linha.TableCliqueSeparators.Where(i=>i.InitializedValue).Select(p=>p.StateBaseValue))
+				foreach (var prob in linha.TableCliqueSeparators.Where(i => i.InitializedValue).Select(p => p.StateBaseValue))
 				{
 					linha.Prob.Add(prob);
 				}
@@ -659,10 +659,10 @@ namespace BayesInferCore.Services
 
 			//Recupera separador entre clique 1 e 2 
 			Separator separator = GetSeparatorNoDirection(clique1, clique2);
-			
+
 			if (separator.InitializedSeparator)
 			{
-				separator.Clone();
+				separator.PotentialClone();
 				separator.ClearTableProb();
 			}
 			for (int m = 0; m < clique2.PotentialTable.Count; m++)
@@ -677,16 +677,16 @@ namespace BayesInferCore.Services
 				}
 				SetTableSeparator(tmpProbTables, separator, clique2.PotentialTable[m].GetProductProb());
 			}
-			if (separator.SeparatorClone != null && separator.SeparatorClone.InitializedSeparator)
+			if (separator.PotentialTableClone != null && separator.PotentialTableClone.Count() > 0)
 			{
-				separator.Divide(separator.SeparatorClone);
+				separator.DividePotentials();
 			}
-				List<ProbabilisticNode> exceptNodesC1 = clique1.Nodes.Except(separator.Nodes).ToList();
+			List<ProbabilisticNode> exceptNodesC1 = clique1.Nodes.Except(separator.Nodes).ToList();
 			foreach (var linha in separator.PotentialTable)
 			{
 				SetProbClique(linha, exceptNodesC1, clique1);
 			}
-			
+
 
 
 
@@ -722,14 +722,14 @@ namespace BayesInferCore.Services
 								var prob = node.PosteriorTabelaNode.Find(p => p.StateBase == col.StateBase);
 								if (prob != null)
 								{
-									//prob.StateBaseValue += linha.Prob;
+									prob.StateBaseValue += linha.GetProductProb();
 								}
 								else
 								{
 									node.PosteriorTabelaNode.Add(new ProbabilisticNodeState()
 									{
 										StateBase = col.StateBase,
-										//StateBaseValue = linha.Prob
+										StateBaseValue = linha.GetProductProb()
 									});
 								}
 							}
@@ -835,7 +835,7 @@ namespace BayesInferCore.Services
 			return _separators.FirstOrDefault(s => s.clique2.Index == clique1.Index && s.clique1.Index == clique2.Index);
 		}
 
-		public FileBayesianNetwork InferModel(List<Belief> lstBelief)
+		public List<NodeInferResult> InferModel(List<Belief> lstBelief)
 		{
 			Parallel.ForEach(lstBelief, (belief) =>
 			{
@@ -848,10 +848,21 @@ namespace BayesInferCore.Services
 			InitBelief();
 			return TranformModel(probabilisticNet);
 		}
-		private FileBayesianNetwork TranformModel(ProbabilisticNetwork probabilisticNet)
+		private List<NodeInferResult> TranformModel(ProbabilisticNetwork probabilisticNet)
 		{
-			FileBayesianNetwork _network = new FileBayesianNetwork();
-			return _network;
+			List<NodeInferResult> result = new List<NodeInferResult>();
+
+			foreach (var node in probabilisticNet.GetNodes())
+			{
+				NodeInferResult nodeInferResult = new NodeInferResult(node.Name);
+				foreach (var linhaPos in node.PosteriorTabelaNode)
+				{
+					nodeInferResult.NodeStates.Add(new ProbabilisticNodeState(linhaPos));
+
+				}
+				result.Add(nodeInferResult);
+			}
+			return result;
 		}
 		private ProbabilisticNetwork TranformModel(FileBayesianNetwork net)
 		{

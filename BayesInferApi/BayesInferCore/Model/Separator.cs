@@ -18,7 +18,7 @@ namespace BayesInferCore.Model
 		public Clique clique2 { get; set; }
 		public Stage SepStage { get; set; }
 
-		public Separator SeparatorClone { get; set; }
+		public List<ProbabilisticTable> PotentialTableClone { get; set; }
 
 		private Separator()
 		{
@@ -57,14 +57,13 @@ namespace BayesInferCore.Model
 				linha.Prob.Clear();
 			}
 		}
-		public void Clone()
+		public void PotentialClone()
 		{
-			SeparatorClone = new Separator(clique1, clique2, false);
-			SeparatorClone.Nodes = this.Nodes;
+			PotentialTableClone = new List<ProbabilisticTable>();
 			foreach (var linha in this.PotentialTable)
 			{
 				ProbabilisticTable probabilisticTable = new ProbabilisticTable(linha.Index);
-				probabilisticTable.Prob = linha.Prob;
+				probabilisticTable.Prob = new List<float>(linha.Prob);
 				foreach (var coluna in linha.TableCliqueSeparators)
 				{
 					var tmp = new TableCliqueSeparator(coluna.StateBase, coluna.NodeBase);
@@ -72,16 +71,16 @@ namespace BayesInferCore.Model
 					tmp.InitializedValue = coluna.InitializedValue;
 					probabilisticTable.TableCliqueSeparators.Add(coluna);
 				}
-				SeparatorClone.PotentialTable.Add(probabilisticTable);
+				PotentialTableClone.Add(probabilisticTable);
 			}
 		}
-		public void Divide(Separator separator)
+		public void DividePotentials()
 		{
 			for (int i = 0; i < this.PotentialTable.Count(); i++)
 			{
-				if (separator.PotentialTable[i].GetSumProb() != 0)
+				if (PotentialTableClone[i].GetSumProb() != 0)
 				{
-					float tmp = this.PotentialTable[i].GetSumProb() / separator.PotentialTable[i].GetSumProb();
+					float tmp = this.PotentialTable[i].GetSumProb() / PotentialTableClone[i].GetSumProb();
 
 					this.PotentialTable[i].Prob.Clear();
 					this.PotentialTable[i].Prob.Add(tmp);
