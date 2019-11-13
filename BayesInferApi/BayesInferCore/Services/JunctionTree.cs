@@ -517,46 +517,6 @@ namespace BayesInferCore.Services
 						auxClique.PotentialTable[k].TableCliqueSeparators.Add(new TableCliqueSeparator(stateString, _cliques[i].Nodes[j]));
 					}
 				}
-				//Percorre tabela potential para adicionar valor padrão para o estado do nodo
-				foreach (var linhaCliq in auxClique.PotentialTable)
-				{
-					foreach (var columnCliq in linhaCliq.TableCliqueSeparators)
-					{
-						//Verifica se existe crença para o nodo
-						if (columnCliq.NodeBase.BeliefValue != null)
-						{
-							columnCliq.StateBaseValue = (float)columnCliq.NodeBase.BeliefValue;
-							columnCliq.InitializedValue = true;
-						}
-						else if (columnCliq.NodeBase.Parents.Count() > 0)
-						{
-							//recupera nodos do clique diferente do nodo atual 
-							var otherNodes = linhaCliq.TableCliqueSeparators.Where(c => c.NodeBase != columnCliq.NodeBase).Select(n => n.NodeBase);
-							//recupera lista de parents que estão no clique em questão diferente do atual
-							var parentsInCliqNode = columnCliq.NodeBase.Parents.Intersect(otherNodes);
-							//percorre lista de parents que estão no clique em questão diferente do nodo atual
-							if (parentsInCliqNode.Count() > 0)
-							{
-								columnCliq.StateBaseValue = GetValuePriorTableNode(columnCliq.NodeBase, columnCliq.StateBase, linhaCliq);
-								columnCliq.InitializedValue = true;
-
-							}
-							else //se clique não possui parents não é possivel calcular valor pois sera atualizado via separador, sendo assim valor=0
-							{
-								columnCliq.StateBaseValue = 0;
-								//não é possove calcular sem propagar 
-								columnCliq.InitializedValue = false;
-							}
-						}
-						else
-						{
-							//pega valor do nodo para o estado em questão
-							columnCliq.StateBaseValue = columnCliq.NodeBase.PriorTabelaNode.TableNodeStates.Where(n => n.StateBase.Equals(columnCliq.StateBase)).Select(n => n.StateBaseValue).FirstOrDefault();
-							columnCliq.InitializedValue = true;
-						}
-					}
-				}
-				UpdateInitializedClique(auxClique);
 			}
 
 			for (int i = 0; i < _separators.Count; i++)
@@ -593,6 +553,62 @@ namespace BayesInferCore.Services
 					}
 
 				}
+			}
+		}
+		private void UpdateCliques()
+		{
+			foreach (var auxClique in _cliques)
+			{
+				//Percorre tabela potential para adicionar valor padrão para o estado do nodo
+				foreach (var linhaCliq in auxClique.PotentialTable)
+				{
+					foreach (var columnCliq in linhaCliq.TableCliqueSeparators)
+					{
+						//Verifica se existe crença para o nodo
+						if (columnCliq.NodeBase.BeliefValue != null)
+						{
+							if(columnCliq.NodeBase.States[(int)columnCliq.NodeBase.BeliefValue] == columnCliq.StateBase)
+							{
+								columnCliq.StateBaseValue = 1F;
+								columnCliq.InitializedValue = true;
+							}
+							else
+							{
+								columnCliq.StateBaseValue = 0F;
+								columnCliq.InitializedValue = true;
+							}
+
+							
+						}
+						else if (columnCliq.NodeBase.Parents.Count() > 0)
+						{
+							//recupera nodos do clique diferente do nodo atual 
+							var otherNodes = linhaCliq.TableCliqueSeparators.Where(c => c.NodeBase != columnCliq.NodeBase).Select(n => n.NodeBase);
+							//recupera lista de parents que estão no clique em questão diferente do atual
+							var parentsInCliqNode = columnCliq.NodeBase.Parents.Intersect(otherNodes);
+							//percorre lista de parents que estão no clique em questão diferente do nodo atual
+							if (parentsInCliqNode.Count() > 0)
+							{
+								columnCliq.StateBaseValue = GetValuePriorTableNode(columnCliq.NodeBase, columnCliq.StateBase, linhaCliq);
+								columnCliq.InitializedValue = true;
+
+							}
+							else //se clique não possui parents não é possivel calcular valor pois sera atualizado via separador, sendo assim valor=0
+							{
+								columnCliq.StateBaseValue = 0;
+								//não é possove calcular sem propagar 
+								columnCliq.InitializedValue = false;
+							}
+						}
+						else
+						{
+							//pega valor do nodo para o estado em questão
+							columnCliq.StateBaseValue = columnCliq.NodeBase.PriorTabelaNode.TableNodeStates.Where(n => n.StateBase.Equals(columnCliq.StateBase)).Select(n => n.StateBaseValue).FirstOrDefault();
+							columnCliq.InitializedValue = true;
+						}
+					}
+				}
+				UpdateInitializedClique(auxClique);
 			}
 		}
 		private void UpdateInitializedClique(Clique clique)
@@ -842,6 +858,7 @@ namespace BayesInferCore.Services
 				//busca no com mesmo nome para adicionar crença
 				probabilisticNet.GetNodes().Find(n => n.Name == belief.NodeName).BeliefValue = belief.BeliefValue;
 			});
+			UpdateCliques();
 			VerifyRoot(_cliques[0]);
 			CollectEvidence(_cliques[0]);
 			DistributeEvidences(_cliques[0]);
