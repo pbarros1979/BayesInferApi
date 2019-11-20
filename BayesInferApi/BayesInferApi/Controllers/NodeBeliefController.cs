@@ -111,11 +111,18 @@ namespace BayesInferApi.Controllers
 			}
 			JunctionTree junctionTree = new JunctionTree(redeBayesiana, true);
 			List<NodeInferResult> lstNodeBeliefResult = junctionTree.InferModel(beliefs);
+			List<NodeBeliefResult> nd = new List<NodeBeliefResult>();
+			foreach (var item in lstNodeBeliefResult)
+			{
+				NodeBeliefResult rs = new NodeBeliefResult();
+				rs.NodeName = item.NodeName;
+				rs.ResultPresente = item.NodeStates[0].StateBaseValue;
+				rs.ResultAusente = item.NodeStates[1].StateBaseValue;
+				nd.Add(rs);
+			}
 
-
-			
-
-			return Json(lstNodeBeliefResult);
+			//return Json(lstNodeBeliefResult);
+			return Json(nd);
 
         }
 

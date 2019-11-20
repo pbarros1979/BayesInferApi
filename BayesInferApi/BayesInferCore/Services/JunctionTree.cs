@@ -512,7 +512,6 @@ namespace BayesInferCore.Services
 								ixState = 0;
 							}
 						}
-
 						string stateString = auxClique.Nodes[j].States[ixState];
 						auxClique.PotentialTable[k].TableCliqueSeparators.Add(new TableCliqueSeparator(stateString, _cliques[i].Nodes[j]));
 					}
