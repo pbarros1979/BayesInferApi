@@ -69,9 +69,9 @@ namespace BayesInferApi.Controllers
             ServiceRedeBayesiana serviceRede = new ServiceRedeBayesiana();
             FileBayesianNetwork redeBayesiana = JsonConvert.DeserializeObject<FileBayesianNetwork>(arquivoRedeBayesiana.ArquivoJson);
 
-            List<Node> lstNode = redeBayesiana.Nodes.Where(n => n.Parents.Count==0).ToList();
-
-            foreach (var item in _nodeBeliefService.NodesBelief)
+			//List<Node> lstNode = redeBayesiana.Nodes.Where(n => n.Parents.Count==0).ToList();
+			List<Node> lstNode = redeBayesiana.Nodes.ToList();
+			foreach (var item in _nodeBeliefService.NodesBelief)
             {
                 Node _node = lstNode.Where(n => n.Id == item.Id).SingleOrDefault();
                 if (_node != null)

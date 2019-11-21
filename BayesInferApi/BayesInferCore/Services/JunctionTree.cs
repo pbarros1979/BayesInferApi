@@ -494,27 +494,32 @@ namespace BayesInferCore.Services
 					numNodeState *= item.States.Count();
 				}
 				auxClique.PotentialTable = new List<ProbabilisticTable>();
-				//auxClique.Potential = new PotentialTable();
 				for (int l = 0; l < numNodeState; l++)
 				{
 					auxClique.PotentialTable.Add(new ProbabilisticTable(l));
 				}
+				int valMetade = numNodeState / 2;
 				for (int j = 0; j < auxClique.Nodes.Count(); j++)
 				{
 					int ixState = 0;
+					int cont = 0;
 					for (int k = 0; k < numNodeState; k++)
 					{
-						if (k > 0 && ((k) % (numNodeState / (auxClique.Nodes[j].States.Count() * (j + 1))) == 0))
+						string stateString = auxClique.Nodes[j].States[ixState];
+						auxClique.PotentialTable[k].TableCliqueSeparators.Add(new TableCliqueSeparator(stateString, _cliques[i].Nodes[j]));
+						cont++;
+						if (cont >= valMetade)
 						{
 							ixState++;
+							cont = 0;
 							if (ixState >= auxClique.Nodes[j].States.Count())
 							{
 								ixState = 0;
 							}
 						}
-						string stateString = auxClique.Nodes[j].States[ixState];
-						auxClique.PotentialTable[k].TableCliqueSeparators.Add(new TableCliqueSeparator(stateString, _cliques[i].Nodes[j]));
+						
 					}
+					valMetade = (valMetade / 2);
 				}
 			}
 
