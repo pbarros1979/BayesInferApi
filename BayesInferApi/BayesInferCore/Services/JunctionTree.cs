@@ -706,23 +706,6 @@ namespace BayesInferCore.Services
 			{
 				SetProbClique(linha, exceptNodesC1, clique1);
 			}
-
-
-
-
-			//Verifica se é ultimo clic
-			//if (clique1.Parent == null)
-			//{
-			//	//Verifica se ja foram calculados todos os cliques e separadores filhos do clique1
-			//	var sepPreviousClique1 = _separators.Where(s => s.clique1.Equals(clique1));
-			//	if (sepPreviousClique1 != null)
-			//	{
-			//		if (sepPreviousClique1.Where(s => s.SepStage == Stage.CollectEvidence).Count() != sepPreviousClique1.Count())
-			//		{
-			//			return;
-			//		}
-			//	}
-			//}
 		}
 		public void InitBelief()
 		{
